@@ -59,6 +59,7 @@ const data = [
 function App() {
   return (
     <div className="App">
+      <h1>hello</h1>
       <a href="https://facebook.com">Learn React</a>
       <LineChart
         width={500}
