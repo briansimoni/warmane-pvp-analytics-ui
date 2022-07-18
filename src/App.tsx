@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "./logo.svg";
+// import logo from "./logo.svg";
 import "./App.css";
 import {
   LineChart,
@@ -9,7 +9,6 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer,
 } from "recharts";
 
 const data = [
@@ -60,7 +59,7 @@ const data = [
 function App() {
   return (
     <div className="App">
-      <a href="">Learn React</a>
+      <a href="https://facebook.com">Learn React</a>
       <LineChart
         width={500}
         height={300}
