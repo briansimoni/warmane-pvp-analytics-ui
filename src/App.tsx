@@ -60,6 +60,7 @@ const data = [
 function App() {
   return (
     <div className="App">
+      <a href="">Learn React</a>
       <LineChart
         width={500}
         height={300}
