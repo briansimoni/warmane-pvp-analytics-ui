@@ -8,8 +8,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - run: npm install
       - run: npm test
-      - run: npm build
 
   deploy:
     runs-on: ubuntu-latest
@@ -18,6 +18,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - run: npm install
       - run: npm run build
       - uses: aws-actions/configure-aws-credentials@v1
         with:
