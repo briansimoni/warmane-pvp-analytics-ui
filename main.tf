@@ -48,9 +48,10 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     }
   }
 
+  aliases             = ["warmane.dog"]
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "Some comment"
+  comment             = "Serves warmane.dog"
   default_root_object = "index.html"
 
   default_cache_behavior {
@@ -78,7 +79,20 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
-    minimum_protocol_version       = "TLSv1.2_2021"
+    acm_certificate_arn      = "arn:aws:acm:us-east-1:502859415194:certificate/c04f5525-a4bb-4518-af9b-57d3e7888a02"
+    minimum_protocol_version = "TLSv1.2_2021"
+    ssl_support_method       = "sni-only"
+  }
+}
+
+resource "aws_route53_record" "warmane_dns" {
+  zone_id = "Z034505310R1LV9SEWA5I"
+  name    = ""
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.s3_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
+    evaluate_target_health = false
   }
 }
