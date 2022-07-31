@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { Thing } from "./Thing";
 
 const data = [
   {
@@ -59,6 +60,7 @@ const data = [
 function App() {
   return (
     <div className="App">
+      <Thing></Thing>
       <h1>hello</h1>
       <a href="https://facebook.com">Learn React</a>
       <LineChart
