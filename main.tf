@@ -42,7 +42,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 resource "aws_cloudfront_origin_access_identity" "warmane_oai" {
-  comment = "origin access identity for cloudfront to serve warmane.dog SPA"
+  comment = "origin access identity for cloudfront to serve warmane.dog react.js app"
 }
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
