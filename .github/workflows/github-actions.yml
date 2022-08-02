@@ -12,6 +12,7 @@ jobs:
       - run: npm test
 
   terraform:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -44,6 +45,7 @@ jobs:
 
 
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
