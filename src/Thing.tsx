@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useAppDispatch, useAppSelector } from './app/hooks'
 import { incremented, amountAdded } from './features/counter/counter-slice'
-import { crawl } from './api/warmane-analytics'
+import { crawl, getMatchData } from './api/warmane-analytics'
 
 export function Thing() {
     crawl('Dumpster', 'Blackrock')
