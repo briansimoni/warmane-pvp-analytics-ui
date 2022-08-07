@@ -9,6 +9,7 @@ jobs:
         with:
           node-version: 18
       - run: npm install
+      - run: npm run format:check
       - run: npm test
 
   terraform:
@@ -53,7 +54,6 @@ jobs:
         with:
           node-version: 18
       - run: npm install
-      - run: npm run format:check
       - run: npm run build
       - uses: aws-actions/configure-aws-credentials@v1
         with:
