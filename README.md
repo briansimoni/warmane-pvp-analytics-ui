@@ -2,6 +2,8 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+To learn more about the eslint rules look here: https://github.com/facebook/create-react-app/blob/v4.0.3/packages/eslint-config-react-app/index.js
+
 ## Available Scripts
 
 In the project directory, you can run:
