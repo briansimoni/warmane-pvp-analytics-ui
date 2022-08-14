@@ -1,41 +1,52 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getMatchData, MatchDetails } from "../../api/warmane-analytics";
+import {
+  crawl,
+  getMatchData,
+  MatchDetails,
+  pollCrawlStatus,
+} from "../../api/warmane-analytics";
 import { RootState } from "../../app/store";
 
-export enum SearchStatus {
+export enum Status {
   IDLE,
   LOADING,
   FAILED,
 }
 
-export interface MatchData {
-  charachter?: string;
-  realm?: string;
-  matches: MatchDetails[];
-}
-
 export interface SearchState {
-  value: MatchData;
-  status: SearchStatus;
+  charachter: string;
+  realm: string;
+  matches: MatchDetails[];
+  status: Status;
+  crawlStatus: Status;
 }
 
-interface GetMatchDataThunkParams {
+interface ApiThunkParams {
   charachter: string;
   realm: string;
 }
 
 const initialState: SearchState = {
-  value: {
-    matches: [],
-  },
-  status: SearchStatus.IDLE,
+  charachter: "",
+  realm: "",
+  matches: [],
+  status: Status.IDLE,
+  crawlStatus: Status.IDLE,
 };
 
 export const getMatchHistory = createAsyncThunk(
   "search/getMatchHistory",
-  async (params: GetMatchDataThunkParams) => {
+  async (params: ApiThunkParams) => {
     const response = await getMatchData(params.charachter, params.realm);
     return response;
+  }
+);
+
+export const crawlAndPoll = createAsyncThunk(
+  "search/crawl",
+  async (params: ApiThunkParams) => {
+    await crawl(params.charachter, params.realm);
+    await pollCrawlStatus(params.charachter, params.realm);
   }
 );
 
@@ -46,14 +57,25 @@ export const searchSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getMatchHistory.pending, (state) => {
-        state.status = SearchStatus.LOADING;
+        state.status = Status.LOADING;
       })
       .addCase(getMatchHistory.fulfilled, (state, action) => {
-        state.status = SearchStatus.IDLE;
-        state.value.matches = action.payload;
+        state.status = Status.IDLE;
+        state.charachter = action.meta.arg.charachter;
+        state.realm = action.meta.arg.realm;
+        state.matches = action.payload;
       })
       .addCase(getMatchHistory.rejected, (state) => {
-        state.status = SearchStatus.FAILED;
+        state.status = Status.FAILED;
+      })
+      .addCase(crawlAndPoll.pending, (state) => {
+        state.crawlStatus = Status.LOADING;
+      })
+      .addCase(crawlAndPoll.fulfilled, (state) => {
+        state.crawlStatus = Status.IDLE;
+      })
+      .addCase(crawlAndPoll.rejected, (state) => {
+        state.crawlStatus = Status.FAILED;
       });
   },
 });

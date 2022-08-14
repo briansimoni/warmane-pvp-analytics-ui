@@ -29,6 +29,12 @@ export interface CharacterDetail {
   teamname: string;
 }
 
+export interface CharacterStatus {
+  crawl_last_completed?: string;
+  crawl_last_started?: string;
+  id: string;
+}
+
 interface CrawlResponse {
   message: string;
 }
@@ -46,6 +52,40 @@ async function crawl(character: string, realm: string) {
   return result;
 }
 
+/**
+ * the timestamp I'm returning from the API is kind of dumb
+ */
+function convertTimestampToDate(timestamp: string) {
+  const split = timestamp.split(".");
+  const seconds = split[0];
+  const ms = parseInt(seconds) * 1000;
+  return new Date(ms);
+}
+
+async function pollCrawlStatus(character: string, realm: string) {
+  let done = false;
+  while (!done) {
+    const response = await getCharacter(character, realm);
+    if (
+      !response.data.crawl_last_completed &&
+      response.data.crawl_last_started
+    ) {
+      done = true;
+    }
+  }
+}
+
+async function getCharacter(character: string, realm: string) {
+  const result = await api.post<CharacterStatus>(
+    `/character/${character}@${realm}`,
+    {
+      character,
+      realm,
+    }
+  );
+  return result;
+}
+
 async function getMatchData(character: string, realm: string) {
   const result = await api.get<MatchDetails[]>(
     `/matches/${character}@${realm}`
@@ -53,4 +93,10 @@ async function getMatchData(character: string, realm: string) {
   return result.data;
 }
 
-export { crawl, getMatchData };
+export {
+  crawl,
+  getMatchData,
+  getCharacter,
+  pollCrawlStatus,
+  convertTimestampToDate,
+};

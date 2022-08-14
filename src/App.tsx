@@ -1,20 +1,32 @@
 import React from "react";
-import Card from "react-bootstrap/Card";
-import { Container } from "react-bootstrap";
-import CoolThing from "./components/graph";
+import { Col, Container, Row } from "react-bootstrap";
+import CoolThing from "./components/CoolThing";
 import Search from "./features/search/Search";
 import DataDemo from "./features/DataDemo/DataDemo";
+import NavigationBar from "./components/NavigationBar";
+import "./App.css";
+import TotalLosses from "./components/TotalLosses";
 
 function App() {
   return (
-    <Container className="p-3">
-      <CoolThing />
-      <Card>
-        <h1 className="header">You are bad</h1>
-      </Card>
-      <Search />
-      <DataDemo />
-    </Container>
+    <>
+      <NavigationBar />
+      <Container className="p-3">
+        <h2>Search for players across warmane!</h2>
+        <small>And see how terrible they are!</small>
+        <Search />
+        <hr />
+        <Row>
+          <Col>
+            <CoolThing />
+          </Col>
+          <Col>
+            <TotalLosses />
+          </Col>
+        </Row>
+        <DataDemo />
+      </Container>
+    </>
   );
 }
 
