@@ -6,6 +6,8 @@ import DataDemo from "./features/DataDemo/DataDemo";
 import NavigationBar from "./components/NavigationBar";
 import "./App.css";
 import TotalLosses from "./components/TotalLosses";
+import DogPicture from "./components/DogPicture";
+import TotalGames from "./components/TotalGames";
 
 function App() {
   return (
@@ -18,10 +20,18 @@ function App() {
         <hr />
         <Row>
           <Col>
-            <CoolThing />
+            <DogPicture />
           </Col>
           <Col>
             <TotalLosses />
+          </Col>
+          <Col>
+            <TotalGames />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <CoolThing />
           </Col>
         </Row>
         <DataDemo />

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useAppDispatch } from "../../app/hooks";
-import Crawl from "./Crawl";
 import { getMatchHistory } from "./search-slice";
 
 function Search() {
@@ -24,9 +23,9 @@ function Search() {
   }
 
   return (
-    <Row>
-      <Col>
-        <Form onSubmit={handleSumbit}>
+    <Form onSubmit={handleSumbit}>
+      <Row>
+        <Col>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <input
               placeholder="Cutrock"
@@ -48,15 +47,14 @@ function Search() {
             id={`icecrown-radio`}
             label={`Icecrown`}
           />
+        </Col>
+        <Col lg="2">
           <Button variant="primary" type="submit">
             Search
           </Button>
-        </Form>
-      </Col>
-      <Col lg="2">
-        <Crawl charachter={charachter} realm="Blackrock" />
-      </Col>
-    </Row>
+        </Col>
+      </Row>
+    </Form>
   );
 }
 

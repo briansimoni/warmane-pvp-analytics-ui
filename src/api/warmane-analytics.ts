@@ -6,7 +6,7 @@ export interface MatchDetails {
   bracket: string;
   arena: string;
   points_change: string;
-  character_details: CharacterDetail | undefined[];
+  character_details: CharacterDetail[]; // | undefined[]; I don't think it can be undfined
   id: string;
   outcome: string;
   duration: string;
@@ -62,10 +62,27 @@ function convertTimestampToDate(timestamp: string) {
   return new Date(ms);
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(undefined);
+    }, ms);
+  });
+}
+
 async function pollCrawlStatus(character: string, realm: string) {
   let done = false;
+  let elapsed = 0;
   while (!done) {
-    const response = await getCharacter(character, realm);
+    elapsed += 250;
+    await sleep(250);
+    if (elapsed >= 60000) {
+      throw new Error("Crawler timeout");
+    }
+    const response = await getCharachter(character, realm);
+    if (response.data === null) {
+      continue;
+    }
     if (
       !response.data.crawl_last_completed &&
       response.data.crawl_last_started
@@ -75,13 +92,9 @@ async function pollCrawlStatus(character: string, realm: string) {
   }
 }
 
-async function getCharacter(character: string, realm: string) {
-  const result = await api.post<CharacterStatus>(
-    `/character/${character}@${realm}`,
-    {
-      character,
-      realm,
-    }
+async function getCharachter(character: string, realm: string) {
+  const result = await api.get<CharacterStatus | null>(
+    `/charachter/${character}@${realm}`
   );
   return result;
 }
@@ -93,10 +106,49 @@ async function getMatchData(character: string, realm: string) {
   return result.data;
 }
 
+async function doItAll(
+  character: string,
+  realm: string
+): Promise<MatchDetails[]> {
+  const charResponse = await getCharachter(character, realm);
+  console.log("charResponse", charResponse);
+  if (charResponse.data === null) {
+    await crawl(character, realm);
+    await pollCrawlStatus(character, realm);
+    const response = await getMatchData(character, realm);
+    return response;
+  }
+  const crawlLastCompleted = charResponse.data?.crawl_last_completed;
+  if (crawlLastCompleted) {
+    const then = convertTimestampToDate(crawlLastCompleted);
+    const now = new Date();
+
+    const msBetweenDates = Math.abs(then.getTime() - now.getTime());
+
+    // 👇️ convert ms to hours                  min  sec   ms
+    const hoursBetweenDates = msBetweenDates / (60 * 60 * 1000);
+
+    if (hoursBetweenDates < 24) {
+      const response = await getMatchData(character, realm);
+      console.log("this response", response);
+      return response;
+    } else {
+      await crawl(character, realm);
+      await pollCrawlStatus(character, realm);
+      const response = await getMatchData(character, realm);
+      return response;
+    }
+  }
+
+  console.log("returning nothing");
+  return [];
+}
+
 export {
   crawl,
   getMatchData,
-  getCharacter,
+  getCharachter,
   pollCrawlStatus,
   convertTimestampToDate,
+  doItAll,
 };

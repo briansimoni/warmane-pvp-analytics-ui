@@ -1,10 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import {
-  crawl,
-  getMatchData,
-  MatchDetails,
-  pollCrawlStatus,
-} from "../../api/warmane-analytics";
+import { doItAll, MatchDetails } from "../../api/warmane-analytics";
 import { RootState } from "../../app/store";
 
 export enum Status {
@@ -34,19 +29,17 @@ const initialState: SearchState = {
   crawlStatus: Status.IDLE,
 };
 
+/**
+ * Beware that this will "Do it all"
+ * it will crawl for new data if the last crawl took
+ * place more than 24 hours ago. This means it may take a long time.
+ */
 export const getMatchHistory = createAsyncThunk(
   "search/getMatchHistory",
   async (params: ApiThunkParams) => {
-    const response = await getMatchData(params.charachter, params.realm);
+    const response = await doItAll(params.charachter, params.realm);
+    console.log("thunk response", response);
     return response;
-  }
-);
-
-export const crawlAndPoll = createAsyncThunk(
-  "search/crawl",
-  async (params: ApiThunkParams) => {
-    await crawl(params.charachter, params.realm);
-    await pollCrawlStatus(params.charachter, params.realm);
   }
 );
 
@@ -63,19 +56,13 @@ export const searchSlice = createSlice({
         state.status = Status.IDLE;
         state.charachter = action.meta.arg.charachter;
         state.realm = action.meta.arg.realm;
-        state.matches = action.payload;
+        console.log(action);
+        if (action.payload) {
+          state.matches = action.payload;
+        }
       })
       .addCase(getMatchHistory.rejected, (state) => {
         state.status = Status.FAILED;
-      })
-      .addCase(crawlAndPoll.pending, (state) => {
-        state.crawlStatus = Status.LOADING;
-      })
-      .addCase(crawlAndPoll.fulfilled, (state) => {
-        state.crawlStatus = Status.IDLE;
-      })
-      .addCase(crawlAndPoll.rejected, (state) => {
-        state.crawlStatus = Status.FAILED;
       });
   },
 });
