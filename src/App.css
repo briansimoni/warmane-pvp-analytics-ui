@@ -1,12 +1,12 @@
 #nav-brand-text {
-  color: white
+  color: white;
 }
 
 #total-losses-value {
-  color: red
+  color: red;
 }
 
-#losses-over-time-card{
+#losses-over-time-card {
   width: 100%;
   height: 40vh;
 }
