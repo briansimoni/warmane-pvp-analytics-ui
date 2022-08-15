@@ -46,7 +46,7 @@ const api = Axios.create({
 
 async function crawl(character: string, realm: string) {
   const result = await api.post<CrawlResponse>("/crawl", {
-    character,
+    char: character,
     realm,
   });
   return result;
@@ -74,8 +74,8 @@ async function pollCrawlStatus(character: string, realm: string) {
   let done = false;
   let elapsed = 0;
   while (!done) {
-    elapsed += 250;
-    await sleep(250);
+    elapsed += 1000;
+    await sleep(1000);
     if (elapsed >= 60000) {
       throw new Error("Crawler timeout");
     }
@@ -84,10 +84,25 @@ async function pollCrawlStatus(character: string, realm: string) {
       continue;
     }
     if (
-      !response.data.crawl_last_completed &&
-      response.data.crawl_last_started
+      response.data.crawl_last_completed &&
+      !response.data.crawl_last_started
     ) {
       done = true;
+      break;
+    }
+    if (
+      response.data.crawl_last_completed &&
+      response.data.crawl_last_started
+    ) {
+      const lastCompleted = convertTimestampToDate(
+        response.data.crawl_last_completed
+      );
+      const lastStarted = convertTimestampToDate(
+        response.data.crawl_last_completed
+      );
+      if (lastCompleted > lastStarted) {
+        done = true;
+      }
     }
   }
 }
