@@ -6,12 +6,14 @@
 // turns on some development checks
 import { configureStore } from "@reduxjs/toolkit";
 import searchReducer from "../features/search/search-slice";
+import crawlReducer from "../features/crawl/crawl-slice";
 
 // redux has tbe ability to mash a bunch of reducers together
 // however reduxtoolkit can do it automaticlly for us
 export const store = configureStore({
   reducer: {
     search: searchReducer,
+    crawl: crawlReducer,
   },
 });
 

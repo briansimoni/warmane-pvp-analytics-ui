@@ -1,12 +1,12 @@
 import { Card, Spinner } from "react-bootstrap";
 import { useAppSelector } from "../app/hooks";
-import { Status } from "../features/search/search-slice";
+import { SearchStatus } from "../features/search/search-slice";
 
 function TotalGames() {
   const state = useAppSelector((e) => e);
   const { status, matches, charachter } = state.search;
 
-  if (status === Status.FAILED) {
+  if (status === SearchStatus.FAILED) {
     return (
       <code>
         <pre>some error occured</pre>
@@ -14,7 +14,7 @@ function TotalGames() {
     );
   }
 
-  if (status === Status.LOADING) {
+  if (status === SearchStatus.LOADING) {
     return (
       <Card>
         <Card.Body>
@@ -27,7 +27,7 @@ function TotalGames() {
     );
   }
 
-  if (status === Status.IDLE && matches.length === 0) {
+  if (status === SearchStatus.IDLE && matches.length === 0) {
     return (
       <Card>
         <Card.Body>

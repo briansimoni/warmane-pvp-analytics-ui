@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { doItAll, MatchDetails } from "../../api/warmane-analytics";
+import { getMatchData, MatchDetails } from "../../api/warmane-analytics";
 import { RootState } from "../../app/store";
 
-export enum Status {
+export enum SearchStatus {
   IDLE,
   LOADING,
   FAILED,
@@ -12,8 +12,7 @@ export interface SearchState {
   charachter: string;
   realm: string;
   matches: MatchDetails[];
-  status: Status;
-  crawlStatus: Status;
+  status: SearchStatus;
 }
 
 interface ApiThunkParams {
@@ -25,8 +24,7 @@ const initialState: SearchState = {
   charachter: "",
   realm: "",
   matches: [],
-  status: Status.IDLE,
-  crawlStatus: Status.IDLE,
+  status: SearchStatus.IDLE,
 };
 
 /**
@@ -37,7 +35,7 @@ const initialState: SearchState = {
 export const getMatchHistory = createAsyncThunk(
   "search/getMatchHistory",
   async (params: ApiThunkParams) => {
-    const response = await doItAll(params.charachter, params.realm);
+    const response = await getMatchData(params.charachter, params.realm);
     console.log("thunk response", response);
     return response;
   }
@@ -46,14 +44,20 @@ export const getMatchHistory = createAsyncThunk(
 export const searchSlice = createSlice({
   name: "search",
   initialState,
-  reducers: {},
+  reducers: {
+    clearMatchHistory: (state) => {
+      state.matches = [];
+      state.charachter = "";
+      state.realm = "";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getMatchHistory.pending, (state) => {
-        state.status = Status.LOADING;
+        state.status = SearchStatus.LOADING;
       })
       .addCase(getMatchHistory.fulfilled, (state, action) => {
-        state.status = Status.IDLE;
+        state.status = SearchStatus.IDLE;
         state.charachter = action.meta.arg.charachter;
         state.realm = action.meta.arg.realm;
         console.log(action);
@@ -62,11 +66,11 @@ export const searchSlice = createSlice({
         }
       })
       .addCase(getMatchHistory.rejected, (state) => {
-        state.status = Status.FAILED;
+        state.status = SearchStatus.FAILED;
       });
   },
 });
 
 export const selectSearchResult = (state: RootState) => state.search;
-
+export const { clearMatchHistory } = searchSlice.actions;
 export default searchSlice.reducer;

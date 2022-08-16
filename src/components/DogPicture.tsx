@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, Spinner } from "react-bootstrap";
 import { useAppSelector } from "../app/hooks";
-import { Status } from "../features/search/search-slice";
+import { SearchStatus } from "../features/search/search-slice";
 
 function DogPicture() {
   const state = useAppSelector((e) => e);
@@ -15,12 +15,12 @@ function DogPicture() {
       const j = await response.json();
       setImage(j.message);
     }
-    if (image === "holder.js/100px180" && status === Status.LOADING) {
+    if (image === "holder.js/100px180" && status === SearchStatus.LOADING) {
       getDogPicture();
     }
   }, [image, status]);
 
-  if (status === Status.FAILED) {
+  if (status === SearchStatus.FAILED) {
     return (
       <code>
         <pre>some error occured</pre>
@@ -28,7 +28,7 @@ function DogPicture() {
     );
   }
 
-  if (status === Status.LOADING) {
+  if (status === SearchStatus.LOADING) {
     return (
       <Card>
         <Card.Body>
@@ -41,7 +41,7 @@ function DogPicture() {
     );
   }
 
-  if (status === Status.IDLE && matches.length === 0) {
+  if (status === SearchStatus.IDLE && matches.length === 0) {
     return (
       <Card>
         <Card.Body>

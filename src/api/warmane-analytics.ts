@@ -31,7 +31,7 @@ export interface CharacterDetail {
 
 export interface CharacterStatus {
   crawl_last_completed?: string;
-  crawl_last_started?: string;
+  crawl_in_progress: boolean;
   id: string;
 }
 
@@ -70,42 +70,76 @@ function sleep(ms: number) {
   });
 }
 
-async function pollCrawlStatus(character: string, realm: string) {
+/**
+ * Polls the API and resolves when the crawl is completed
+ * @param charachter
+ * @param realm
+ */
+async function waitForCrawlToComplete(charachter: string, realm: string) {
+  if (!(await shouldCrawl(charachter, realm))) {
+    return;
+  }
+  await crawl(charachter, realm);
   let done = false;
   let elapsed = 0;
   while (!done) {
-    elapsed += 1000;
-    await sleep(1000);
     if (elapsed >= 60000) {
       throw new Error("Crawler timeout");
     }
-    const response = await getCharachter(character, realm);
+    await sleep(1000);
+    elapsed += 1000;
+    const response = await getCharachter(charachter, realm);
+    // If we trigger the asyncronous lambda, and we query faster
+    // than that lambda writes a message that the crawl has started
     if (response.data === null) {
       continue;
     }
-    if (
-      response.data.crawl_last_completed &&
-      !response.data.crawl_last_started
-    ) {
+    if (!response.data.crawl_in_progress) {
       done = true;
-      break;
-    }
-    if (
-      response.data.crawl_last_completed &&
-      response.data.crawl_last_started
-    ) {
-      const lastCompleted = convertTimestampToDate(
-        response.data.crawl_last_completed
-      );
-      const lastStarted = convertTimestampToDate(
-        response.data.crawl_last_completed
-      );
-      if (lastCompleted > lastStarted) {
-        done = true;
-      }
     }
   }
 }
+
+// /**
+//  *
+//  * @deprecated
+//  */
+// async function pollCrawlStatus(character: string, realm: string) {
+//   let done = false;
+//   let elapsed = 0;
+//   while (!done) {
+//     elapsed += 1000;
+//     await sleep(1000);
+//     if (elapsed >= 60000) {
+//       throw new Error("Crawler timeout");
+//     }
+//     const response = await getCharachter(character, realm);
+//     if (response.data === null) {
+//       continue;
+//     }
+//     if (
+//       response.data.crawl_last_completed &&
+//       !response.data.crawl_last_started
+//     ) {
+//       done = true;
+//       break;
+//     }
+//     if (
+//       response.data.crawl_last_completed &&
+//       response.data.crawl_last_started
+//     ) {
+//       const lastCompleted = convertTimestampToDate(
+//         response.data.crawl_last_completed
+//       );
+//       const lastStarted = convertTimestampToDate(
+//         response.data.crawl_last_completed
+//       );
+//       if (lastCompleted > lastStarted) {
+//         done = true;
+//       }
+//     }
+//   }
+// }
 
 async function getCharachter(character: string, realm: string) {
   const result = await api.get<CharacterStatus | null>(
@@ -121,19 +155,20 @@ async function getMatchData(character: string, realm: string) {
   return result.data;
 }
 
-async function doItAll(
-  character: string,
+async function shouldCrawl(
+  charachter: string,
   realm: string
-): Promise<MatchDetails[]> {
-  const charResponse = await getCharachter(character, realm);
-  console.log("charResponse", charResponse);
-  if (charResponse.data === null) {
-    await crawl(character, realm);
-    await pollCrawlStatus(character, realm);
-    const response = await getMatchData(character, realm);
-    return response;
+): Promise<boolean> {
+  const response = await getCharachter(charachter, realm);
+  if (response.data?.crawl_last_completed) {
+    if (crawledInLast24Hours(response.data.crawl_last_completed)) {
+      return false;
+    }
   }
-  const crawlLastCompleted = charResponse.data?.crawl_last_completed;
+  return true;
+}
+
+function crawledInLast24Hours(crawlLastCompleted: string): boolean {
   if (crawlLastCompleted) {
     const then = convertTimestampToDate(crawlLastCompleted);
     const now = new Date();
@@ -144,26 +179,53 @@ async function doItAll(
     const hoursBetweenDates = msBetweenDates / (60 * 60 * 1000);
 
     if (hoursBetweenDates < 24) {
-      const response = await getMatchData(character, realm);
-      console.log("this response", response);
-      return response;
-    } else {
-      await crawl(character, realm);
-      await pollCrawlStatus(character, realm);
-      const response = await getMatchData(character, realm);
-      return response;
+      return true;
     }
   }
-
-  console.log("returning nothing");
-  return [];
+  return false;
 }
 
+// async function doItAll(
+//   character: string,
+//   realm: string
+// ): Promise<MatchDetails[]> {
+//   const charResponse = await getCharachter(character, realm);
+//   console.log("charResponse", charResponse);
+//   if (charResponse.data === null) {
+//     await crawl(character, realm);
+//     await pollCrawlStatus(character, realm);
+//     const response = await getMatchData(character, realm);
+//     return response;
+//   }
+//   const crawlLastCompleted = charResponse.data?.crawl_last_completed;
+//   if (crawlLastCompleted) {
+//     const then = convertTimestampToDate(crawlLastCompleted);
+//     const now = new Date();
+
+//     const msBetweenDates = Math.abs(then.getTime() - now.getTime());
+
+//     // 👇️ convert ms to hours                  min  sec   ms
+//     const hoursBetweenDates = msBetweenDates / (60 * 60 * 1000);
+
+//     if (hoursBetweenDates < 24) {
+//       const response = await getMatchData(character, realm);
+//       console.log("this response", response);
+//       return response;
+//     } else {
+//       await crawl(character, realm);
+//       await pollCrawlStatus(character, realm);
+//       const response = await getMatchData(character, realm);
+//       return response;
+//     }
+//   }
+
+//   console.log("returning nothing");
+//   return [];
+// }
+
 export {
-  crawl,
   getMatchData,
   getCharachter,
-  pollCrawlStatus,
+  waitForCrawlToComplete,
   convertTimestampToDate,
-  doItAll,
 };

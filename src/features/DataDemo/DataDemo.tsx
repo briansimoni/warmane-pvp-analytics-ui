@@ -1,13 +1,13 @@
 import { Spinner } from "react-bootstrap";
 import { useAppSelector } from "../../app/hooks";
-import { Status } from "../search/search-slice";
+import { SearchStatus } from "../search/search-slice";
 
 function DataDemo() {
   const state = useAppSelector((e) => e);
   const { status, matches } = state.search;
   const stringifiedData = JSON.stringify(matches, null, 2);
 
-  if (status === Status.FAILED) {
+  if (status === SearchStatus.FAILED) {
     return (
       <code>
         <pre>some error occured</pre>
@@ -15,7 +15,7 @@ function DataDemo() {
     );
   }
 
-  if (status === Status.LOADING) {
+  if (status === SearchStatus.LOADING) {
     return (
       <Spinner animation="border" role="status">
         <span className="visually-hidden">Loading...</span>
@@ -23,7 +23,7 @@ function DataDemo() {
     );
   }
 
-  if (status === Status.IDLE && matches.length === 0) {
+  if (status === SearchStatus.IDLE && matches.length === 0) {
     return (
       <code>
         <pre>matches will appear here</pre>
