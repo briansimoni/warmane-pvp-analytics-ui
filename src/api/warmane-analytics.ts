@@ -14,7 +14,7 @@ export interface MatchDetails {
 }
 
 export interface CharacterDetail {
-  matchmaking_change: string;
+  matchmaking_change?: string;
   healingDone: string;
   race?: string;
   gender?: string;

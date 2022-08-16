@@ -62,9 +62,9 @@ function DogPicture() {
         <Card.Body>
           <Card.Title>{charachter} IRL</Card.Title>
           <Card.Text>
-            Using advanced Machine Learning and artificial intelligence, we can
-            determine exactly what someone looks like{" "}
-            <strong>in real life</strong>
+            Using advanced <strong>Machine Learning</strong> and{" "}
+            <strong>AI</strong>, we can determine exactly what someone looks
+            like <strong>in real life</strong>
           </Card.Text>
         </Card.Body>
       </Card>

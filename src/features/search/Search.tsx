@@ -68,7 +68,7 @@ function Search() {
         <Col>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <input
-              placeholder="Cutrock"
+              placeholder="Homerjay"
               className="form-control"
               type="text"
               onChange={handleChange}
@@ -91,7 +91,7 @@ function Search() {
             disabled={true}
             type={"radio"}
             id={`icecrown-radio`}
-            label={`Icecrown`}
+            label={`Iceclown`}
           />
         </Col>
         <Col lg="2">
