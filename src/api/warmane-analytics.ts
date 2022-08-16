@@ -100,47 +100,6 @@ async function waitForCrawlToComplete(charachter: string, realm: string) {
   }
 }
 
-// /**
-//  *
-//  * @deprecated
-//  */
-// async function pollCrawlStatus(character: string, realm: string) {
-//   let done = false;
-//   let elapsed = 0;
-//   while (!done) {
-//     elapsed += 1000;
-//     await sleep(1000);
-//     if (elapsed >= 60000) {
-//       throw new Error("Crawler timeout");
-//     }
-//     const response = await getCharachter(character, realm);
-//     if (response.data === null) {
-//       continue;
-//     }
-//     if (
-//       response.data.crawl_last_completed &&
-//       !response.data.crawl_last_started
-//     ) {
-//       done = true;
-//       break;
-//     }
-//     if (
-//       response.data.crawl_last_completed &&
-//       response.data.crawl_last_started
-//     ) {
-//       const lastCompleted = convertTimestampToDate(
-//         response.data.crawl_last_completed
-//       );
-//       const lastStarted = convertTimestampToDate(
-//         response.data.crawl_last_completed
-//       );
-//       if (lastCompleted > lastStarted) {
-//         done = true;
-//       }
-//     }
-//   }
-// }
-
 async function getCharachter(character: string, realm: string) {
   const result = await api.get<CharacterStatus | null>(
     `/charachter/${character}@${realm}`
@@ -184,44 +143,6 @@ function crawledInLast24Hours(crawlLastCompleted: string): boolean {
   }
   return false;
 }
-
-// async function doItAll(
-//   character: string,
-//   realm: string
-// ): Promise<MatchDetails[]> {
-//   const charResponse = await getCharachter(character, realm);
-//   console.log("charResponse", charResponse);
-//   if (charResponse.data === null) {
-//     await crawl(character, realm);
-//     await pollCrawlStatus(character, realm);
-//     const response = await getMatchData(character, realm);
-//     return response;
-//   }
-//   const crawlLastCompleted = charResponse.data?.crawl_last_completed;
-//   if (crawlLastCompleted) {
-//     const then = convertTimestampToDate(crawlLastCompleted);
-//     const now = new Date();
-
-//     const msBetweenDates = Math.abs(then.getTime() - now.getTime());
-
-//     // 👇️ convert ms to hours                  min  sec   ms
-//     const hoursBetweenDates = msBetweenDates / (60 * 60 * 1000);
-
-//     if (hoursBetweenDates < 24) {
-//       const response = await getMatchData(character, realm);
-//       console.log("this response", response);
-//       return response;
-//     } else {
-//       await crawl(character, realm);
-//       await pollCrawlStatus(character, realm);
-//       const response = await getMatchData(character, realm);
-//       return response;
-//     }
-//   }
-
-//   console.log("returning nothing");
-//   return [];
-// }
 
 export {
   getMatchData,

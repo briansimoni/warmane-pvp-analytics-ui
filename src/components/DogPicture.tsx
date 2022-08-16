@@ -6,7 +6,7 @@ import { SearchStatus } from "../features/search/search-slice";
 function DogPicture() {
   const state = useAppSelector((e) => e);
   const { status, matches, charachter } = state.search;
-  const [image, setImage] = useState("holder.js/100px180");
+  const [image, setImage] = useState("");
 
   useEffect(() => {
     async function getDogPicture() {
@@ -15,10 +15,13 @@ function DogPicture() {
       const j = await response.json();
       setImage(j.message);
     }
-    if (image === "holder.js/100px180" && status === SearchStatus.LOADING) {
+    if (!charachter) {
+      setImage("");
+    }
+    if (charachter) {
       getDogPicture();
     }
-  }, [image, status]);
+  }, [charachter]);
 
   if (status === SearchStatus.FAILED) {
     return (
