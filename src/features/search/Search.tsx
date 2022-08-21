@@ -11,6 +11,7 @@ import {
 function Search() {
   const dispatch = useAppDispatch();
   const [charachter, setCharachter] = useState("");
+  const [realm, setRealm] = useState("Blackrock");
   const [progress, setProgress] = useState(0);
   const state = useAppSelector((e) => e);
   const searchStatus = state.search.status;
@@ -21,6 +22,10 @@ function Search() {
   function handleChange(event: React.FormEvent<HTMLInputElement>) {
     const c = event.currentTarget.value;
     setCharachter(c);
+  }
+
+  function handleRealmChange(event: React.FormEvent<HTMLInputElement>) {
+    setRealm(event.currentTarget.value);
   }
 
   function handleSumbit(event: React.FormEvent) {
@@ -34,7 +39,7 @@ function Search() {
     dispatch(
       crawlAndWait({
         charachter,
-        realm: "Blackrock",
+        realm,
       })
     );
     dispatch(clearMatchHistory());
@@ -45,11 +50,11 @@ function Search() {
       dispatch(
         getMatchHistory({
           charachter,
-          realm: "Blackrock",
+          realm,
         })
       );
     }
-  }, [crawlFinished, charachter, dispatch, matches]);
+  }, [crawlFinished, charachter, dispatch, matches, realm]);
 
   useEffect(() => {
     if (crawlStatus === CrawlStatus.LOADING && progress <= 100) {
@@ -68,7 +73,6 @@ function Search() {
         <Col>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <input
-              placeholder="Homerjay"
               className="form-control"
               type="text"
               onChange={handleChange}
@@ -82,16 +86,20 @@ function Search() {
             </>
           )}
           <Form.Check
-            defaultChecked
+            value="Blackrock"
+            checked={realm === "Blackrock"}
             type={"radio"}
-            id={`blackrock-radio`}
-            label={`Blackrock`}
+            id={"blackrock-radio"}
+            label={"Blackrock"}
+            onChange={handleRealmChange}
           />
           <Form.Check
-            disabled={true}
+            value="Icecrown"
+            checked={realm === "Icecrown"}
             type={"radio"}
             id={`icecrown-radio`}
-            label={`Iceclown`}
+            label={"Iceclown"}
+            onChange={handleRealmChange}
           />
         </Col>
         <Col lg="2">
