@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, ProgressBar, Row } from "react-bootstrap";
+import { Alert, Button, Col, Form, ProgressBar, Row } from "react-bootstrap";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { crawlAndWait, CrawlStatus } from "../crawl/crawl-slice";
 import {
@@ -28,12 +28,15 @@ function Search() {
     setRealm(event.currentTarget.value);
   }
 
-  function handleSumbit(event: React.FormEvent) {
+  function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (
       searchStatus === SearchStatus.LOADING ||
       crawlStatus === CrawlStatus.LOADING
     ) {
+      return;
+    }
+    if (charachter === "") {
       return;
     }
     dispatch(
@@ -57,10 +60,10 @@ function Search() {
   }, [crawlFinished, charachter, dispatch, matches, realm]);
 
   useEffect(() => {
-    if (crawlStatus === CrawlStatus.LOADING && progress <= 100) {
+    if (crawlStatus === CrawlStatus.LOADING && progress <= 60) {
       setTimeout(() => {
         setProgress(progress + 1);
-      }, 250);
+      }, 1000);
     }
     if (crawlStatus === CrawlStatus.IDLE) {
       setProgress(0);
@@ -68,7 +71,7 @@ function Search() {
   }, [crawlStatus, progress, setProgress]);
 
   return (
-    <Form onSubmit={handleSumbit}>
+    <Form onSubmit={handleSubmit}>
       <Row>
         <Col>
           <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -81,8 +84,16 @@ function Search() {
           </Form.Group>
           {CrawlStatus.LOADING === crawlStatus && (
             <>
-              <p>Crawling warmane.com for data. This may take a minute.</p>
-              <ProgressBar now={progress} />
+              {/* <ProgressBar now={progress} /> */}
+              <Alert variant="primary">
+                Crawling warmane.com for data. This may take a minute. Time
+                elapsed: {progress}s
+              </Alert>
+            </>
+          )}
+          {CrawlStatus.FAILED === crawlStatus && (
+            <>
+              <Alert variant="warning">{state.crawl.error.message}</Alert>
             </>
           )}
           <Form.Check

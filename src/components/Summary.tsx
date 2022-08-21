@@ -9,7 +9,7 @@ function Summary() {
   if (status === SearchStatus.FAILED) {
     return (
       <code>
-        <pre>some error occured</pre>
+        <pre>some error occurred</pre>
       </code>
     );
   }

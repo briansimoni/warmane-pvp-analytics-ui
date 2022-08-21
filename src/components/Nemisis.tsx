@@ -35,7 +35,6 @@ function Nemisis() {
     );
   }
 
-  // TODO figure out why this doens't work
   const m = new Map<string, number>();
   matches
     .filter((match) => match.outcome === "Loss")

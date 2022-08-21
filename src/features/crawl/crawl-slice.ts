@@ -1,4 +1,8 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  SerializedError,
+} from "@reduxjs/toolkit";
 import { waitForCrawlToComplete } from "../../api/warmane-analytics";
 import { RootState } from "../../app/store";
 
@@ -13,6 +17,7 @@ export interface CrawlState {
   realm: string;
   status: CrawlStatus;
   crawlFinished: boolean;
+  error: SerializedError;
 }
 
 const initialState: CrawlState = {
@@ -20,6 +25,7 @@ const initialState: CrawlState = {
   realm: "",
   status: CrawlStatus.IDLE,
   crawlFinished: false,
+  error: {},
 };
 
 interface ApiThunkParams {
@@ -59,7 +65,8 @@ export const searchSlice = createSlice({
         state.realm = action.meta.arg.realm;
         state.crawlFinished = true;
       })
-      .addCase(crawlAndWait.rejected, (state) => {
+      .addCase(crawlAndWait.rejected, (state, action) => {
+        state.error = action.error;
         state.status = CrawlStatus.FAILED;
       });
   },

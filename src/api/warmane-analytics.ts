@@ -84,12 +84,14 @@ async function waitForCrawlToComplete(charachter: string, realm: string) {
   let elapsed = 0;
   while (!done) {
     if (elapsed >= 60000) {
-      throw new Error("Crawler timeout");
+      throw new Error(
+        "The crawler is taking over a minute to complete. This person has played a TON of games! Try again in a few minutes."
+      );
     }
     await sleep(1000);
     elapsed += 1000;
     const response = await getCharachter(charachter, realm);
-    // If we trigger the asyncronous lambda, and we query faster
+    // If we trigger the asynchronous lambda, and we query faster
     // than that lambda writes a message that the crawl has started
     if (response.data === null) {
       continue;
