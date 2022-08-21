@@ -41,7 +41,7 @@ interface CrawlResponse {
 
 const api = Axios.create({
   // baseURL: "https://21kqq2jgg7.execute-api.us-east-1.amazonaws.com/Prod",
-  baseURL: "https://61hn5v2774.execute-api.us-east-1.amazonaws.com/Prod",
+  baseURL: "https://vgepnlr2he.execute-api.us-east-1.amazonaws.com/Prod",
 });
 
 async function crawl(character: string, realm: string) {

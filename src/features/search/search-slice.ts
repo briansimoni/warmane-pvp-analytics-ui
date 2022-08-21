@@ -36,7 +36,6 @@ export const getMatchHistory = createAsyncThunk(
   "search/getMatchHistory",
   async (params: ApiThunkParams) => {
     const response = await getMatchData(params.charachter, params.realm);
-    console.log("thunk response", response);
     return response;
   }
 );

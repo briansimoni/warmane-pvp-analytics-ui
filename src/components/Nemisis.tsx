@@ -35,6 +35,7 @@ function Nemisis() {
     );
   }
 
+  // TODO figure out why this doens't work
   const m = new Map<string, number>();
   matches
     .filter((match) => match.outcome === "Loss")
@@ -48,7 +49,7 @@ function Nemisis() {
             return false;
           }
           const matchMakingChange = parseInt(deets.matchmaking_change);
-          return matchMakingChange > 0;
+          return matchMakingChange > 0 && deets.charname !== charachter;
         }
       );
       peopleWhoBeatThisPerson.forEach((victor) => {
