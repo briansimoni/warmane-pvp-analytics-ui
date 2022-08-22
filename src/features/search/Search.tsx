@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Col, Form, ProgressBar, Row } from "react-bootstrap";
+import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { crawlAndWait, CrawlStatus } from "../crawl/crawl-slice";
 import {
@@ -21,7 +21,7 @@ function Search() {
 
   function handleChange(event: React.FormEvent<HTMLInputElement>) {
     const c = event.currentTarget.value;
-    setCharachter(c);
+    setCharachter(c.trim());
   }
 
   function handleRealmChange(event: React.FormEvent<HTMLInputElement>) {
