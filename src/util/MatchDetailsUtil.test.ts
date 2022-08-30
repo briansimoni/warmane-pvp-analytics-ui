@@ -29,6 +29,18 @@ describe("testing match details", () => {
     expect(wins.length).toBeGreaterThanOrEqual(1);
     expect(losses.length).toBeGreaterThan(1);
   });
+
+  test("Solo queue comps", () => {
+    const matchHistoryChecker = new ClassMatchHistory(testData);
+    const sqComps = matchHistoryChecker.getUniqueSoloQueueComps();
+    expect(sqComps.length).toBeGreaterThan(10);
+  });
+
+  test("Solo top 10 wins", () => {
+    const matchHistoryChecker = new ClassMatchHistory(testData);
+    const top10 = matchHistoryChecker.getTop10SqComp("Loss");
+    console.log(top10);
+  });
 });
 
 export {};
