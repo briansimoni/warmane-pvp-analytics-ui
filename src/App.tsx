@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import Search from "./features/search/Search";
 import NavigationBar from "./components/NavigationBar";
 import "./App.css";
@@ -7,6 +7,7 @@ import DogPicture from "./components/DogPicture";
 import Nemisis from "./components/Nemisis";
 import Summary from "./components/Summary";
 import ClassWinRate from "./components/ClassWinRate";
+import SoloQueueBreakDown from "./components/SoloQueueBreakdown";
 
 function App() {
   return (
@@ -36,6 +37,18 @@ function App() {
         <Row>
           <Col>
             <ClassWinRate />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Card>
+              <h2>Solo Queue Breakdown</h2>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <SoloQueueBreakDown />
           </Col>
         </Row>
         {/* <DataDemo /> */}

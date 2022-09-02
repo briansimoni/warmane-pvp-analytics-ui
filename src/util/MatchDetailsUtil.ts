@@ -13,6 +13,22 @@ export enum WowClass {
   DRUID = "11",
 }
 
+export function convertIntClassToString(wowClass: WowClass) {
+  const m = {
+    "1": "warrior",
+    "2": "paladin",
+    "3": "hunter",
+    "4": "rogue",
+    "5": "priest",
+    "6": "deathknight",
+    "7": "shaman",
+    "8": "mage",
+    "9": "warlock",
+    "11": "druid",
+  };
+  return m[wowClass];
+}
+
 /**
  * Given an array of MatchHistory, this will return
  * a new array of MatchHistory where the the charachter_details
@@ -40,6 +56,15 @@ export function removeFriendlies(matches: MatchDetails[]): MatchDetails[] {
     result.push(newMatch);
   });
   return result;
+}
+
+// the index is a comp for instance "4,5,6"
+interface Comps {
+  [index: string]: {
+    wins: number;
+    losses: number;
+    total: number;
+  };
 }
 
 export class ClassMatchHistory {
@@ -72,62 +97,70 @@ export class ClassMatchHistory {
     const matchesWithoutEnemies = removeFriendlies(matches);
 
     interface soloQueueResult {
-      comp: string[];
+      comp: string[]; // each element will be a string digit that refers to a wow class for example ["1", "2", "3"]
       outcome: string;
     }
 
     const data: soloQueueResult[] = [];
 
     matchesWithoutEnemies.forEach((match) => {
-      const classes = match.character_details.map((detail) => detail.class);
+      const classes = match.character_details.map((detail) => {
+        if (detail.class) {
+          return parseInt(detail.class);
+        }
+        return undefined;
+      });
       if (classes.includes(undefined)) {
         return;
       }
 
-      const comp = classes.sort() as string[];
+      const comp = classes.sort((a, b) => {
+        if (a! < b!) {
+          return -1;
+        } else if (a! > b!) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }) as number[];
       data.push({
-        comp,
+        comp: comp.toString().split(","),
         outcome: match.outcome,
       });
     });
     return data;
   }
 
-  public getSqWinRatePerComp() {
-    const comps = this.getSoloQueueComps()
+  // gets the total wins and losses per comp
+  public getCompOutcomes() {
+    const comps = this.getSoloQueueComps();
 
-    interface Comps {
-      [index: string]: {
-        wins: number
-        losses: number
+    const data: Comps = {};
+
+    comps.forEach((match) => {
+      const comp = match.comp.join();
+      if (!data[comp]) {
+        data[comp] = {
+          wins: 0,
+          losses: 0,
+          total: 0,
+        };
       }
-    }
 
-    const data: Comps = {}
-
-    comps.forEach((win) => {
-      const key = win.comp.toString();
-      if (data[key]) {
-        data[key].wins = data[key].wins + data[key].wins + 1
-        data.set(key, (data.get(key) as number) + 1);
-      } else {
-        data.set(key, 1);
+      if (match.outcome === "Victory") {
+        data[comp].wins++;
+        data[comp].total++;
+      } else if (match.outcome === "Loss") {
+        data[comp].losses++;
+        data[comp].total++;
       }
     });
 
-    const top10 = Array.from(data)
-      .sort(([compA, outcomesA], [compB, outcomesB]) => {
-        if (outcomesA > outcomesB) {
-          return -1;
-        } else if (outcomesA === outcomesB) {
-          return 0;
-        } else {
-          return 1;
-        }
-      })
-      .slice(0, 10);
+    return data;
+  }
 
-    const sortedData = new Map(top10);
-    return sortedData;
+  public sortCompsByTotalGames(comps: Comps) {
+    const entries = Object.entries(comps);
+    return entries;
   }
 }

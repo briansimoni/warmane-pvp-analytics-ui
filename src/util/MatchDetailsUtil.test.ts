@@ -30,16 +30,11 @@ describe("testing match details", () => {
     expect(losses.length).toBeGreaterThan(1);
   });
 
-  test("Solo queue comps", () => {
+  test("comp outcomes", () => {
     const matchHistoryChecker = new ClassMatchHistory(testData);
-    const sqComps = matchHistoryChecker.getUniqueSoloQueueComps();
-    expect(sqComps.length).toBeGreaterThan(10);
-  });
-
-  test("Solo top 10 wins", () => {
-    const matchHistoryChecker = new ClassMatchHistory(testData);
-    const top10 = matchHistoryChecker.getTop10SqComp("Loss");
-    console.log(top10);
+    const outcomes = matchHistoryChecker.getCompOutcomes();
+    expect(Object.keys(outcomes).length).toBeGreaterThan(1);
+    expect(outcomes["1,2,7"].total).toBe(36);
   });
 });
 
