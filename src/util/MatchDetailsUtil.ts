@@ -92,8 +92,8 @@ export class ClassMatchHistory {
   // returns an array of solo queue results
   // see the interface
   //
-  private getSoloQueueComps() {
-    const matches = this.matches.filter((match) => match.bracket === "5v5");
+  private getComps(bracket: "5v5" | "3v3" | "2v2") {
+    const matches = this.matches.filter((match) => match.bracket === bracket);
     const matchesWithoutEnemies = removeFriendlies(matches);
 
     interface soloQueueResult {
@@ -132,8 +132,8 @@ export class ClassMatchHistory {
   }
 
   // gets the total wins and losses per comp
-  public getCompOutcomes() {
-    const comps = this.getSoloQueueComps();
+  public getCompOutcomes(bracket: "5v5" | "3v3" | "2v2") {
+    const comps = this.getComps(bracket);
 
     const data: Comps = {};
 

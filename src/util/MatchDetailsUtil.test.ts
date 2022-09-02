@@ -30,9 +30,9 @@ describe("testing match details", () => {
     expect(losses.length).toBeGreaterThan(1);
   });
 
-  test("comp outcomes", () => {
+  test("soloqueue comp outcomes", () => {
     const matchHistoryChecker = new ClassMatchHistory(testData);
-    const outcomes = matchHistoryChecker.getCompOutcomes();
+    const outcomes = matchHistoryChecker.getCompOutcomes("5v5");
     expect(Object.keys(outcomes).length).toBeGreaterThan(1);
     expect(outcomes["1,2,7"].total).toBe(36);
   });

@@ -7,9 +7,14 @@ import {
   convertIntClassToString,
   WowClass,
 } from "../../util/MatchDetailsUtil";
-import SoloQueuePieChart from "./SoloQueuePieChart";
+import SoloQueuePieChart from "./BracketPieChart";
 
-function SoloQueueBreakDown() {
+interface BracketBreakdownConfig {
+  bracket: "2v2" | "3v3" | "5v5";
+  title: string;
+}
+
+function SoloQueueBreakDown(props: BracketBreakdownConfig) {
   const state = useAppSelector((e) => e);
   const { status, matches } = state.search;
   if (status === SearchStatus.FAILED) {
@@ -43,7 +48,7 @@ function SoloQueueBreakDown() {
   }
 
   const classMatchHistory = new ClassMatchHistory(matches);
-  const compOutcomes = classMatchHistory.getCompOutcomes();
+  const compOutcomes = classMatchHistory.getCompOutcomes(props.bracket);
   const niceData = classMatchHistory.listCompOutcomes(compOutcomes);
 
   const compsSortedByTotal = Object.entries(compOutcomes).sort((a, b) => {
@@ -123,7 +128,7 @@ function SoloQueueBreakDown() {
 
   return (
     <>
-      <SoloQueuePieChart />
+      <SoloQueuePieChart {...props} />
 
       <DataTable columns={columns} data={niceData} dense pagination />
     </>

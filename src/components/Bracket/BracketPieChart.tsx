@@ -4,7 +4,12 @@ import { useAppSelector } from "../../app/hooks";
 import { SearchStatus } from "../../features/search/search-slice";
 import { ClassMatchHistory } from "../../util/MatchDetailsUtil";
 
-function SoloQueuePieChart() {
+interface BracketBreakdownConfig {
+  bracket: "2v2" | "3v3" | "5v5";
+  title: string;
+}
+
+function SoloQueuePieChart(props: BracketBreakdownConfig) {
   const state = useAppSelector((e) => e);
   const { status, matches } = state.search;
   if (status === SearchStatus.FAILED) {
@@ -18,7 +23,7 @@ function SoloQueuePieChart() {
     return (
       <Card>
         <Card.Body>
-          <Card.Title>Solo Queue BreakDown</Card.Title>
+          <Card.Title>{props.title}</Card.Title>
           <Spinner animation="border" role="status">
             <span className="visually-hidden">Loading...</span>
           </Spinner>
@@ -30,7 +35,7 @@ function SoloQueuePieChart() {
     return (
       <Card>
         <Card.Body>
-          <Card.Title>Solo Queue BreakDown</Card.Title>
+          <Card.Title>{props.title}</Card.Title>
           <h2>?</h2>
         </Card.Body>
       </Card>
@@ -68,7 +73,7 @@ function SoloQueuePieChart() {
   };
 
   const classMatchHistory = new ClassMatchHistory(matches);
-  const compOutcomes = classMatchHistory.getCompOutcomes();
+  const compOutcomes = classMatchHistory.getCompOutcomes(props.bracket);
   const listedOutcomes = classMatchHistory.listCompOutcomes(compOutcomes);
 
   listedOutcomes.sort((a, b) => {
