@@ -10,7 +10,7 @@ import {
 
 function SoloQueueBreakDown() {
   const state = useAppSelector((e) => e);
-  const { status, matches, charachter } = state.search;
+  const { status, matches } = state.search;
   if (status === SearchStatus.FAILED) {
     return (
       <code>
