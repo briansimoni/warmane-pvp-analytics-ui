@@ -7,7 +7,7 @@ import DogPicture from "./components/DogPicture";
 import Nemisis from "./components/Nemisis";
 import Summary from "./components/Summary";
 import ClassWinRate from "./components/ClassWinRate";
-import SoloQueueBreakDown from "./components/SoloQueueBreakdown";
+import SoloQueueBreakDown from "./components/SoloQueue/SoloQueueBreakdown";
 
 function App() {
   return (

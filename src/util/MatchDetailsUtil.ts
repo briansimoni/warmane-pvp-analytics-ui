@@ -159,8 +159,32 @@ export class ClassMatchHistory {
     return data;
   }
 
-  public sortCompsByTotalGames(comps: Comps) {
-    const entries = Object.entries(comps);
-    return entries;
+  private convertToFriendlyName(comp: string) {
+    const s = comp.split(",");
+    const friendly = s.map((wowClass) =>
+      convertIntClassToString(wowClass as WowClass)
+    );
+    return friendly.join("/");
+  }
+
+  /**
+   * instead of returning some useless object where the keys are the comp,
+   * return a list of objects
+   */
+  public listCompOutcomes(comps: Comps) {
+    const totalGames = Object.entries(comps).reduce(
+      (accumulator, [comp, outcome]) => (accumulator += outcome.total),
+      0
+    );
+    console.log(totalGames);
+
+    return Object.entries(comps).map(([comp, outcome]) => {
+      return {
+        comp: this.convertToFriendlyName(comp),
+        ...outcome,
+        winRate: Math.round((outcome.wins / outcome.total) * 100) / 100,
+        frequency: Math.round((outcome.total / totalGames) * 100) / 100,
+      };
+    });
   }
 }
