@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import Search from "./features/search/Search";
 import NavigationBar from "./components/NavigationBar";
 import "./App.css";
