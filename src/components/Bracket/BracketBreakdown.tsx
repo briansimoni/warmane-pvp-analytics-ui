@@ -7,14 +7,14 @@ import {
   convertIntClassToString,
   WowClass,
 } from "../../util/MatchDetailsUtil";
-import SoloQueuePieChart from "./BracketPieChart";
+import BracketPieChart from "./BracketPieChart";
 
 interface BracketBreakdownConfig {
   bracket: "2v2" | "3v3" | "5v5";
   title: string;
 }
 
-function SoloQueueBreakDown(props: BracketBreakdownConfig) {
+function BracketBreakdown(props: BracketBreakdownConfig) {
   const state = useAppSelector((e) => e);
   const { status, matches } = state.search;
   if (status === SearchStatus.FAILED) {
@@ -28,7 +28,7 @@ function SoloQueueBreakDown(props: BracketBreakdownConfig) {
     return (
       <Card>
         <Card.Body>
-          <Card.Title>Solo Queue BreakDown</Card.Title>
+          <Card.Title>{props.title}</Card.Title>
           <Spinner animation="border" role="status">
             <span className="visually-hidden">Loading...</span>
           </Spinner>
@@ -40,8 +40,8 @@ function SoloQueueBreakDown(props: BracketBreakdownConfig) {
     return (
       <Card>
         <Card.Body>
-          <Card.Title>Solo Queue BreakDown</Card.Title>
-          <h2>?</h2>
+          <Card.Title>{props.title}</Card.Title>
+          <h2>...</h2>
         </Card.Body>
       </Card>
     );
@@ -128,11 +128,11 @@ function SoloQueueBreakDown(props: BracketBreakdownConfig) {
 
   return (
     <>
-      <SoloQueuePieChart {...props} />
+      <BracketPieChart {...props} />
 
       <DataTable columns={columns} data={niceData} dense pagination />
     </>
   );
 }
 
-export default SoloQueueBreakDown;
+export default BracketBreakdown;

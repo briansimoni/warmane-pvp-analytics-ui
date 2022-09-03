@@ -7,7 +7,7 @@ import DogPicture from "./components/DogPicture";
 import Nemisis from "./components/Nemisis";
 import Summary from "./components/Summary";
 import ClassWinRate from "./components/ClassWinRate";
-import SoloQueueBreakDown from "./components/Bracket/BracketBreakdown";
+import BracketBreakdown from "./components/Bracket/BracketBreakdown";
 
 function App() {
   return (
@@ -41,7 +41,7 @@ function App() {
         </Row>
         <Row>
           <Col>
-            <SoloQueueBreakDown bracket="5v5" title="Solo Queue Breakdown" />
+            <BracketBreakdown bracket="5v5" title="Solo Queue Breakdown" />
           </Col>
         </Row>
         <Row>
@@ -51,7 +51,7 @@ function App() {
         </Row>
         <Row>
           <Col>
-            <SoloQueueBreakDown bracket="2v2" title="2v2 Breakdown" />
+            <BracketBreakdown bracket="2v2" title="2v2 Breakdown" />
           </Col>
         </Row>
 
@@ -62,7 +62,7 @@ function App() {
         </Row>
         <Row>
           <Col>
-            <SoloQueueBreakDown bracket="3v3" title="3v3 Breakdown" />
+            <BracketBreakdown bracket="3v3" title="3v3 Breakdown" />
           </Col>
         </Row>
       </Container>

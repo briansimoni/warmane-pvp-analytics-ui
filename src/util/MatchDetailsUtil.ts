@@ -176,7 +176,6 @@ export class ClassMatchHistory {
       (accumulator, [comp, outcome]) => (accumulator += outcome.total),
       0
     );
-    console.log(totalGames);
 
     return Object.entries(comps).map(([comp, outcome]) => {
       return {

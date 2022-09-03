@@ -7,6 +7,7 @@ import {
   getMatchHistory,
   SearchStatus,
 } from "./search-slice";
+import { useParams } from "react-router-dom";
 
 function Search() {
   const dispatch = useAppDispatch();
@@ -18,6 +19,40 @@ function Search() {
   const matches = state.search.matches;
   const crawlStatus = state.crawl.status;
   const crawlFinished = state.crawl.crawlFinished;
+
+  const params = useParams();
+  // console.log(params);
+  // if (
+  //   params.realm &&
+  //   params.charachter &&
+  //   !state.search.charachter &&
+  //   crawlStatus !== CrawlStatus.LOADING
+  // ) {
+  //   console.log(params);
+  //   // dispatch(
+  //   //   crawlAndWait({
+  //   //     charachter: params.charachter,
+  //   //     realm: params.realm,
+  //   //   })
+  //   // );
+  // }
+
+  useEffect(() => {
+    if (
+      params.realm &&
+      params.charachter &&
+      !state.search.charachter &&
+      crawlStatus !== CrawlStatus.LOADING
+    ) {
+      console.log(params);
+      // dispatch(
+      //   crawlAndWait({
+      //     charachter: params.charachter,
+      //     realm: params.realm,
+      //   })
+      // );
+    }
+  }, [params, charachter, crawlStatus, state.search, dispatch]);
 
   function handleChange(event: React.FormEvent<HTMLInputElement>) {
     const c = event.currentTarget.value;

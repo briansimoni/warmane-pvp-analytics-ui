@@ -9,7 +9,7 @@ interface BracketBreakdownConfig {
   title: string;
 }
 
-function SoloQueuePieChart(props: BracketBreakdownConfig) {
+function BracketPieChart(props: BracketBreakdownConfig) {
   const state = useAppSelector((e) => e);
   const { status, matches } = state.search;
   if (status === SearchStatus.FAILED) {
@@ -156,4 +156,4 @@ function SoloQueuePieChart(props: BracketBreakdownConfig) {
   );
 }
 
-export default SoloQueuePieChart;
+export default BracketPieChart;
