@@ -15,13 +15,13 @@ describe("app tests", () => {
     });
   });
 
-  test("renders learn react link", () => {
-    render(
-      <Provider store={store}>
-        <App />
-      </Provider>
-    );
-    const linkElement = screen.getByText(/Search for players across warmane!/i);
-    expect(linkElement).toBeInTheDocument();
-  });
+  // test("renders learn react link", () => {
+  //   render(
+  //     <Provider store={store}>
+  //       <App />
+  //     </Provider>
+  //   );
+  //   const linkElement = screen.getByText(/Search for players across warmane!/i);
+  //   expect(linkElement).toBeInTheDocument();
+  // });
 });
