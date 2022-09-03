@@ -15,6 +15,10 @@ describe("app tests", () => {
     });
   });
 
+  test("lol", () => {
+    expect(true).toBe(true);
+  });
+
   // test("renders learn react link", () => {
   //   render(
   //     <Provider store={store}>
