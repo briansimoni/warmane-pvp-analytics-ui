@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { crawlAndWait, CrawlStatus } from "../crawl/crawl-slice";
+import { crawl, CrawlStatus } from "../crawl/crawl-slice";
 import {
   clearMatchHistory,
   getMatchHistory,
   SearchStatus,
 } from "./search-slice";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
+type ComponentState = "loading" | "error" | "idle" | "done";
 
 function Search() {
   const dispatch = useAppDispatch();
@@ -15,44 +17,49 @@ function Search() {
   const [realm, setRealm] = useState("Blackrock");
   const [progress, setProgress] = useState(0);
   const state = useAppSelector((e) => e);
+  const navigate = useNavigate();
   const searchStatus = state.search.status;
   const matches = state.search.matches;
   const crawlStatus = state.crawl.status;
-  const crawlFinished = state.crawl.crawlFinished;
+  const [componentState, setComponentState] = useState<ComponentState>("idle");
 
   const params = useParams();
-  // console.log(params);
-  // if (
-  //   params.realm &&
-  //   params.charachter &&
-  //   !state.search.charachter &&
-  //   crawlStatus !== CrawlStatus.LOADING
-  // ) {
-  //   console.log(params);
-  //   // dispatch(
-  //   //   crawlAndWait({
-  //   //     charachter: params.charachter,
-  //   //     realm: params.realm,
-  //   //   })
-  //   // );
-  // }
 
   useEffect(() => {
+    async function search(charachter: string, realm: string) {
+      setComponentState("loading");
+      await dispatch(
+        crawl({
+          charachter,
+          realm,
+        })
+      );
+
+      await dispatch(
+        getMatchHistory({
+          charachter,
+          realm,
+        })
+      );
+      setComponentState("done");
+    }
     if (
       params.realm &&
       params.charachter &&
-      !state.search.charachter &&
-      crawlStatus !== CrawlStatus.LOADING
+      componentState !== "done" &&
+      componentState !== "loading"
     ) {
-      console.log(params);
-      // dispatch(
-      //   crawlAndWait({
-      //     charachter: params.charachter,
-      //     realm: params.realm,
-      //   })
-      // );
+      search(params.charachter, params.realm);
     }
-  }, [params, charachter, crawlStatus, state.search, dispatch]);
+  }, [
+    charachter,
+    componentState,
+    dispatch,
+    params.charachter,
+    params.realm,
+    realm,
+    matches,
+  ]);
 
   function handleChange(event: React.FormEvent<HTMLInputElement>) {
     const c = event.currentTarget.value;
@@ -74,25 +81,13 @@ function Search() {
     if (charachter === "") {
       return;
     }
-    dispatch(
-      crawlAndWait({
-        charachter,
-        realm,
-      })
-    );
     dispatch(clearMatchHistory());
+    setComponentState("idle");
+    const replace = !!params.charachter;
+    navigate(`/p/${realm}/${charachter}`, {
+      replace,
+    });
   }
-
-  useEffect(() => {
-    if (crawlFinished && matches.length === 0) {
-      dispatch(
-        getMatchHistory({
-          charachter,
-          realm,
-        })
-      );
-    }
-  }, [crawlFinished, charachter, dispatch, matches, realm]);
 
   useEffect(() => {
     if (crawlStatus === CrawlStatus.LOADING && progress <= 60) {
@@ -140,8 +135,8 @@ function Search() {
             onChange={handleRealmChange}
           />
           <Form.Check
-            value="Icecrown"
-            checked={realm === "Icecrown"}
+            value="icecrown"
+            checked={realm === "icecrown"}
             type={"radio"}
             id={`icecrown-radio`}
             label={"Iceclown"}

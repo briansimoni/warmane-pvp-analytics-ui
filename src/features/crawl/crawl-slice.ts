@@ -38,7 +38,7 @@ interface ApiThunkParams {
  * upon completion. It is up to the caller to determine if initiating
  * a crawl for a particular charachter is allowed
  */
-export const crawlAndWait = createAsyncThunk(
+export const crawl = createAsyncThunk(
   "crawl",
   async (params: ApiThunkParams) => {
     const response = await waitForCrawlToComplete(
@@ -55,17 +55,17 @@ export const searchSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(crawlAndWait.pending, (state) => {
+      .addCase(crawl.pending, (state) => {
         state.crawlFinished = false;
         state.status = CrawlStatus.LOADING;
       })
-      .addCase(crawlAndWait.fulfilled, (state, action) => {
+      .addCase(crawl.fulfilled, (state, action) => {
         state.status = CrawlStatus.IDLE;
         state.charachter = action.meta.arg.charachter;
         state.realm = action.meta.arg.realm;
         state.crawlFinished = true;
       })
-      .addCase(crawlAndWait.rejected, (state, action) => {
+      .addCase(crawl.rejected, (state, action) => {
         state.error = action.error;
         state.status = CrawlStatus.FAILED;
       });

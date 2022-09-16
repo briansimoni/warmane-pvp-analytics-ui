@@ -6,7 +6,7 @@ export interface MatchDetails {
   bracket: string;
   arena: string;
   points_change: string;
-  character_details: CharacterDetail[]; // | undefined[]; I don't think it can be undfined
+  character_details: CharacterDetail[]; // | undefined[]; I don't think it can be undefined
   id: string;
   outcome: string;
   duration: string;
@@ -45,6 +45,8 @@ const api = Axios.create({
 });
 
 async function crawl(character: string, realm: string) {
+  realm = capitalize(realm);
+  character = capitalize(character);
   const result = await api.post<CrawlResponse>("/crawl", {
     char: character,
     realm,
@@ -68,6 +70,13 @@ function sleep(ms: number) {
       resolve(undefined);
     }, ms);
   });
+}
+
+function capitalize(s: string) {
+  if (s === "") {
+    return "";
+  }
+  return s[0].toUpperCase() + s.slice(1);
 }
 
 /**
@@ -103,6 +112,8 @@ async function waitForCrawlToComplete(charachter: string, realm: string) {
 }
 
 async function getCharachter(character: string, realm: string) {
+  realm = capitalize(realm);
+  character = capitalize(character);
   const result = await api.get<CharacterStatus | null>(
     `/charachter/${character}@${realm}`
   );
@@ -110,6 +121,8 @@ async function getCharachter(character: string, realm: string) {
 }
 
 async function getMatchData(character: string, realm: string) {
+  realm = capitalize(realm);
+  character = capitalize(character);
   const result = await api.get<MatchDetails[]>(
     `/matches/${character}@${realm}`
   );
@@ -120,6 +133,8 @@ async function shouldCrawl(
   charachter: string,
   realm: string
 ): Promise<boolean> {
+  realm = capitalize(realm);
+  charachter = capitalize(charachter);
   const response = await getCharachter(charachter, realm);
   if (response.data?.crawl_last_completed) {
     if (crawledInLast24Hours(response.data.crawl_last_completed)) {

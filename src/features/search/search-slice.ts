@@ -27,11 +27,6 @@ const initialState: SearchState = {
   status: SearchStatus.IDLE,
 };
 
-/**
- * Beware that this will "Do it all"
- * it will crawl for new data if the last crawl took
- * place more than 24 hours ago. This means it may take a long time.
- */
 export const getMatchHistory = createAsyncThunk(
   "search/getMatchHistory",
   async (params: ApiThunkParams) => {
@@ -59,7 +54,6 @@ export const searchSlice = createSlice({
         state.status = SearchStatus.IDLE;
         state.charachter = action.meta.arg.charachter;
         state.realm = action.meta.arg.realm;
-        console.log(action);
         if (action.payload) {
           state.matches = action.payload;
         }

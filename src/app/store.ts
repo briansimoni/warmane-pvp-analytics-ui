@@ -9,7 +9,7 @@ import searchReducer from "../features/search/search-slice";
 import crawlReducer from "../features/crawl/crawl-slice";
 
 // redux has tbe ability to mash a bunch of reducers together
-// however reduxtoolkit can do it automaticlly for us
+// however redux toolkit can do it automatically for us
 export const store = configureStore({
   reducer: {
     search: searchReducer,
