@@ -8,6 +8,7 @@ import {
   WowClass,
 } from "../../util/MatchDetailsUtil";
 import BracketPieChart from "./BracketPieChart";
+import { CompImages } from "./CompImages";
 
 interface BracketBreakdownConfig {
   bracket: "2v2" | "3v3" | "5v5";
@@ -50,6 +51,7 @@ function BracketBreakdown(props: BracketBreakdownConfig) {
   const classMatchHistory = new ClassMatchHistory(matches);
   const compOutcomes = classMatchHistory.getCompOutcomes(props.bracket);
   const niceData = classMatchHistory.listCompOutcomes(compOutcomes);
+  // niceData[0].comp = <img src={warriorImage} alt="warrior"></img>;
 
   const compsSortedByTotal = Object.entries(compOutcomes).sort((a, b) => {
     const aTotal = a[1].total;
@@ -98,6 +100,7 @@ function BracketBreakdown(props: BracketBreakdownConfig) {
       name: "Enemy Comp",
       selector: (row) => row.comp,
       sortable: true,
+      cell: (row) => <CompImages comp={row.comp} />,
     },
     {
       name: "Wins",
