@@ -90,6 +90,12 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     minimum_protocol_version = "TLSv1.2_2021"
     ssl_support_method       = "sni-only"
   }
+
+  custom_error_response {
+    error_code         = 403
+    response_code      = 200
+    response_page_path = "/"
+  }
 }
 
 resource "aws_route53_record" "warmane_dns" {
