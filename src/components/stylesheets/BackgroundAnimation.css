@@ -1,0 +1,33 @@
+/* see BackgroundAnimation.tsx comments */
+
+@keyframes scanEffect {
+  from {
+    background: linear-gradient(
+      90deg,
+      rgba(100, 100, 106, 1) 0%,
+      rgba(253, 253, 255, 0.95) 0%,
+      rgba(100, 100, 96, 1) 100%
+    );
+  }
+  to {
+    background: linear-gradient(
+      90deg,
+      rgba(100, 100, 106, 1) 0%,
+      rgba(253, 253, 255, 0.95) 100%,
+      rgba(100, 100, 96, 1) 100%
+    );
+  }
+}
+
+.background-animation {
+  position: fixed;
+  top: calc(0 - 4.5rem);
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -999;
+  animation-name: gradientAnimation;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}

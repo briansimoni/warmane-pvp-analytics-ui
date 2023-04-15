@@ -3,7 +3,8 @@
 // takes the reducer and makes a store but it creates it with the right defaults
 // it auto enables the redux dev tools
 // automatically create the func middleware
-// turns on some development checks
+// turns on some development checks'
+
 import { configureStore } from "@reduxjs/toolkit";
 import searchReducer from "../features/search/search-slice";
 import crawlReducer from "../features/crawl/crawl-slice";

@@ -1,10 +1,11 @@
 import { Card, Spinner } from "react-bootstrap";
 import { useAppSelector } from "../app/hooks";
 import { SearchStatus } from "../features/search/search-slice";
+import styles from "./stylesheets/nonStatText.module.css";
 
 function Nemisis() {
   const state = useAppSelector((e) => e);
-  const { status, matches, charachter } = state.search;
+  const { status, matches, character } = state.search;
   if (status === SearchStatus.FAILED) {
     return (
       <code>
@@ -48,7 +49,7 @@ function Nemisis() {
             return false;
           }
           const matchMakingChange = parseInt(deets.matchmaking_change);
-          return matchMakingChange > 0 && deets.charname !== charachter;
+          return matchMakingChange > 0 && deets.charname !== character;
         }
       );
       peopleWhoBeatThisPerson.forEach((victor) => {
@@ -71,13 +72,18 @@ function Nemisis() {
   });
 
   return (
-    <Card>
+    <Card className={styles.card}>
       <Card.Body>
-        <Card.Title>Nemisis</Card.Title>
-        <h2 id="Nemisis">{nemisis}</h2>
+        <Card.Header>
+          Nemisis:{" "}
+          <h2 className="card-stat-value" id="Nemisis">
+            {nemisis}
+          </h2>
+        </Card.Header>
+        <Card.Title></Card.Title>
         <Card.Text>
-          {charachter} lost to {nemisis} <strong>{most}</strong> times this
-          season. And that guy sucks!
+          {character} lost to {nemisis} a whopping <strong>{most}</strong> times
+          this season&mdash;and that guy sucks!
         </Card.Text>
       </Card.Body>
     </Card>

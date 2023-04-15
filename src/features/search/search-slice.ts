@@ -9,19 +9,19 @@ export enum SearchStatus {
 }
 
 export interface SearchState {
-  charachter: string;
+  character: string;
   realm: string;
   matches: MatchDetails[];
   status: SearchStatus;
 }
 
 interface ApiThunkParams {
-  charachter: string;
+  character: string;
   realm: string;
 }
 
 const initialState: SearchState = {
-  charachter: "",
+  character: "",
   realm: "",
   matches: [],
   status: SearchStatus.IDLE,
@@ -30,7 +30,7 @@ const initialState: SearchState = {
 export const getMatchHistory = createAsyncThunk(
   "search/getMatchHistory",
   async (params: ApiThunkParams) => {
-    const response = await getMatchData(params.charachter, params.realm);
+    const response = await getMatchData(params.character, params.realm);
     return response;
   }
 );
@@ -41,7 +41,7 @@ export const searchSlice = createSlice({
   reducers: {
     clearMatchHistory: (state) => {
       state.matches = [];
-      state.charachter = "";
+      state.character = "";
       state.realm = "";
     },
   },
@@ -52,7 +52,7 @@ export const searchSlice = createSlice({
       })
       .addCase(getMatchHistory.fulfilled, (state, action) => {
         state.status = SearchStatus.IDLE;
-        state.charachter = action.meta.arg.charachter;
+        state.character = action.meta.arg.character;
         state.realm = action.meta.arg.realm;
         if (action.payload) {
           state.matches = action.payload;

@@ -1,12 +1,86 @@
-#nav-brand-text {
-  color: white;
-}
 
-#total-losses-value {
-  color: red;
+.main-container {
+  font-family: var(--content-font), Arial, Helvetica, sans-serif;
 }
 
 #losses-over-time-card {
   width: 100%;
   height: 40vh;
 }
+
+.row {
+display: flex;
+align-items: center;
+}
+
+.row:not(:last-child) {
+  margin-bottom: 15px;
+}
+
+h1 {
+  font-family: var(--title-font);
+}
+
+h2 {
+  font-family: var(--content-font);
+  font-size: 1.6rem;
+}
+
+p {
+  font-family: var(--content-font);
+}
+
+.card {
+  margin: 1rem auto;
+  display: flex;
+  justify-content: center;
+  background: var(--med-gray-bg);
+}
+
+.card-body {
+  font-family: var(--content-font);
+  font-weight: 500;
+  border: 1.5px double rgba(0, 0, 0, 0.3);
+  border-radius: 2px;
+  background: var(--light-gray-bg);
+}
+
+
+.list-group-item {
+  text-align: left;
+  width: 100%;
+  display: flex;
+  background-color: var(--canvas) !important;
+}
+
+.card-title {
+  display: inline;
+  /* border-bottom: 3px solid var(--dark-blue); */
+}
+
+.bracket-divider {
+  border: 3px inset rgba(0, 0, 0, 0.3);
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+@media only screen
+and (max-device-height: 768px) 
+and (max-device-width: 1024px) 
+{
+  .main-container {
+    text-align: center;
+  }
+}
+
+
+
+/*
+--Breakpoints--
+  xs: <576px
+  s: >=576px
+  m: >=768px
+  l: >=992px
+  xl: >=1200px
+  xxl: >=1400px
+  */

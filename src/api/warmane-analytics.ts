@@ -81,14 +81,14 @@ function capitalize(s: string) {
 
 /**
  * Polls the API and resolves when the crawl is completed
- * @param charachter
+ * @param character
  * @param realm
  */
-async function waitForCrawlToComplete(charachter: string, realm: string) {
-  if (!(await shouldCrawl(charachter, realm))) {
+async function waitForCrawlToComplete(character: string, realm: string) {
+  if (!(await shouldCrawl(character, realm))) {
     return;
   }
-  await crawl(charachter, realm);
+  await crawl(character, realm);
   let done = false;
   let elapsed = 0;
   while (!done) {
@@ -99,7 +99,7 @@ async function waitForCrawlToComplete(charachter: string, realm: string) {
     }
     await sleep(1000);
     elapsed += 1000;
-    const response = await getCharachter(charachter, realm);
+    const response = await getCharacter(character, realm);
     // If we trigger the asynchronous lambda, and we query faster
     // than that lambda writes a message that the crawl has started
     if (response.data === null) {
@@ -111,11 +111,11 @@ async function waitForCrawlToComplete(charachter: string, realm: string) {
   }
 }
 
-async function getCharachter(character: string, realm: string) {
+async function getCharacter(character: string, realm: string) {
   realm = capitalize(realm);
   character = capitalize(character);
   const result = await api.get<CharacterStatus | null>(
-    `/charachter/${character}@${realm}`
+    `/character/${character}@${realm}`
   );
   return result;
 }
@@ -130,12 +130,12 @@ async function getMatchData(character: string, realm: string) {
 }
 
 async function shouldCrawl(
-  charachter: string,
+  character: string,
   realm: string
 ): Promise<boolean> {
   realm = capitalize(realm);
-  charachter = capitalize(charachter);
-  const response = await getCharachter(charachter, realm);
+  character = capitalize(character);
+  const response = await getCharacter(character, realm);
   if (response.data?.crawl_last_completed) {
     if (crawledInLast24Hours(response.data.crawl_last_completed)) {
       return false;
@@ -163,7 +163,7 @@ function crawledInLast24Hours(crawlLastCompleted: string): boolean {
 
 export {
   getMatchData,
-  getCharachter,
+  getCharacter,
   waitForCrawlToComplete,
   convertTimestampToDate,
 };

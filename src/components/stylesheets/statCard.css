@@ -1,0 +1,19 @@
+.card-stat-value {
+  margin: auto;
+  color: var(--red);
+}
+
+.img-overlay--text {
+  font-size: 1rem;
+  font-family: var(--caption-font);
+  background-color: rgba(0, 0, 0, 0.4);
+  color: var(--light-gray);
+  border-radius: 2px;
+  padding: 0.3rem 0.5rem;
+}
+
+.card-header {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+}

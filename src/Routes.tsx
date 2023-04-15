@@ -12,7 +12,7 @@ export default function AppRoutes() {
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/p/:realm/:charachter" element={<App />} />
+          <Route path="/p/:realm/:character" element={<App />} />
           <Route path="/" element={<App />} />
         </Routes>
       </BrowserRouter>

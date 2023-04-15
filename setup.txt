@@ -1,0 +1,26 @@
+# Getting started (Windows specific)
+
+## Preperation
+install Node.js & NPM (https://nodejs.org/en/download/)
+install Chocolatey (https://chocolatey.org/install) [optional]
+  * Chocolatey makes installing Github CLI a bit easier
+install Git
+  - terminal input if using Chocolatey: ['choco install git.install']
+  - terminal input if using NPM: ['npm install git']
+install Github CLI
+  - terminal input if using Chocolatey: ['choco install gh']
+  - otherwise, download an MSI installer: (https://cli.github.com/manual/installation)
+
+## Cloning the repository
+1. Navigate to the Github repo (https://github.com/briansimoni/warmane-pvp-analytics-ui)
+2. On the main branch, click 'Code'
+3. Under 'Code > Local > Clone > Github CLI' there should be a terminal command ['gh repo clone briansimoni/warmane-pvp-analytics-ui']
+4. Follow terminal prompts to complete Github authorization
+5. Select connection method:
+    -HTTPS (password protected, flexible) 
+    -SSH (public-key cryptography, inflexible)
+6. Change directories ['cd warmane-pvp-analytics-ui']
+7. Create new branch ['git branch (new_branch_name)']
+8. Open code editor ['code .']
+
+## Pushing to Git

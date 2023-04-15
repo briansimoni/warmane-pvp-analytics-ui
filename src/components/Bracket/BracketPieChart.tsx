@@ -1,8 +1,9 @@
 import { Card, Col, Row, Spinner } from "react-bootstrap";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { useAppSelector } from "../../app/hooks";
 import { SearchStatus } from "../../features/search/search-slice";
 import { ClassMatchHistory } from "../../util/MatchDetailsUtil";
+import { useState, useEffect } from "react";
 
 interface BracketBreakdownConfig {
   bracket: "2v2" | "3v3" | "5v5";
@@ -10,6 +11,25 @@ interface BracketBreakdownConfig {
 }
 
 function BracketPieChart(props: BracketBreakdownConfig) {
+  const [isSmallerPieChart, setIsSmallerPieChart] = useState(false);
+
+  useEffect(() => {
+    const checkScreenWidth = () => {
+      if (window.innerWidth <= 768) {
+        setIsSmallerPieChart(true);
+      } else {
+        setIsSmallerPieChart(false);
+      }
+    };
+
+    checkScreenWidth();
+    window.addEventListener("resize", checkScreenWidth);
+
+    return () => {
+      window.removeEventListener("resize", checkScreenWidth);
+    };
+  }, []);
+
   const state = useAppSelector((e) => e);
   const { status, matches } = state.search;
   if (status === SearchStatus.FAILED) {
@@ -42,6 +62,8 @@ function BracketPieChart(props: BracketBreakdownConfig) {
     );
   }
 
+  const pieChartOuterRadius = isSmallerPieChart ? 75 : 150;
+
   // const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
   const COLORS = ["blue", "purple", "red", "brown", "gray"];
 
@@ -55,7 +77,7 @@ function BracketPieChart(props: BracketBreakdownConfig) {
     percent,
     index,
   }: any) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.8;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
@@ -66,6 +88,7 @@ function BracketPieChart(props: BracketBreakdownConfig) {
         fill="white"
         textAnchor={x > cx ? "start" : "end"}
         dominantBaseline="central"
+        fontSize={12}
       >
         {`${(percent * 100).toFixed(0)}%`}
       </text>
@@ -105,34 +128,6 @@ function BracketPieChart(props: BracketBreakdownConfig) {
     <>
       <Row>
         <Col>
-          <Card id="losses-over-time-card">
-            <Card.Body>
-              <Card.Title>Pie Chart</Card.Title>
-              <ResponsiveContainer width="100%" height="90%">
-                <PieChart width={400} height={400}>
-                  <Pie
-                    data={pieChartData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={renderCustomizedLabel}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {pieChartData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col>
           <Card>
             <Card.Header>Legend</Card.Header>
             <Card.Body>
@@ -148,6 +143,35 @@ function BracketPieChart(props: BracketBreakdownConfig) {
                   <strong>gray:</strong> Other
                 </li>
               </ul>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col>
+          <Card id="losses-over-time-card">
+            <Card.Body>
+              <Card.Title>({props.bracket})</Card.Title>
+              <ResponsiveContainer width="100%" height="90%">
+                <PieChart>
+                  <Pie
+                    data={pieChartData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={renderCustomizedLabel}
+                    outerRadius={pieChartOuterRadius}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {pieChartData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
             </Card.Body>
           </Card>
         </Col>
