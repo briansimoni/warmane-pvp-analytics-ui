@@ -1,7 +1,6 @@
 import { Card, Spinner } from "react-bootstrap";
 import { useAppSelector } from "../app/hooks";
 import { SearchStatus } from "../features/search/search-slice";
-import styles from "./stylesheets/nonStatText.module.css";
 
 function Nemisis() {
   const state = useAppSelector((e) => e);
@@ -72,7 +71,7 @@ function Nemisis() {
   });
 
   return (
-    <Card className={styles.card}>
+    <Card>
       <Card.Body>
         <Card.Header>
           Nemisis:{" "}
@@ -81,7 +80,7 @@ function Nemisis() {
           </h2>
         </Card.Header>
         <Card.Title></Card.Title>
-        <Card.Text>
+        <Card.Text className="text-center">
           {character} lost to {nemisis} a whopping <strong>{most}</strong> times
           this season&mdash;and that guy sucks!
         </Card.Text>

@@ -1,10 +1,8 @@
-import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import Search from "./features/search/Search";
 import NavigationBar from "./components/NavigationBar";
 import "./App.css";
 import DogPicture from "./components/DogPicture";
-// import BackgroundAnimation from './components/BackgroundAnimation';
 import Nemisis from "./components/Nemisis";
 import Summary from "./components/Summary";
 import ClassWinRate from "./components/ClassWinRate";
@@ -13,11 +11,9 @@ import BracketBreakdown from "./components/Bracket/BracketBreakdown";
 function App() {
   return (
     <>
-    {/* <BackgroundAnimation> */}
-    {/* see BackgroundAnimation.tsx comments */}
       <NavigationBar />
       <Container fluid="xl" className="p-3 main-container">
-        <h1>Search for players across Warmane...</h1>
+        <h1 className='header'>Search for players across Warmane...</h1>
         <p>Let's see just how terrible they are!</p>
         <Search />
         <hr />

@@ -4,7 +4,7 @@ import Container from "react-bootstrap/Container";
 import { Link } from "react-router-dom";
 import logo from "./assets/WoW_icon.svg";
 import foundDog from "./assets/dog-search-v2.png";
-import "./stylesheets/NavigationBar.css";
+import "../App.css";
 
 function NavigationBar() {
   // keeps track of scroll position

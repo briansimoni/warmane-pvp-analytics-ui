@@ -2,7 +2,7 @@ import { Card, Spinner } from "react-bootstrap";
 import { useAppSelector } from "../app/hooks";
 import { SearchStatus } from "../features/search/search-slice";
 import ListGroup from "react-bootstrap/ListGroup";
-import "./stylesheets/statCard.css";
+import "../App.css";
 
 function Summary() {
   const state = useAppSelector((e) => e);
@@ -46,6 +46,7 @@ function Summary() {
 
   const winRate = (matches.length - totalLosses) / matches.length;
   const winRatePercentage = Math.round(winRate * 100);
+
 
   return (
     <Card>

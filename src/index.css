@@ -1,27 +1,23 @@
-@import url("https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;700&family=Fira+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Grenze+Gotisch&family=Gruppo&family=PT+Sans+Caption&family=PT+Sans:ital@0;1&family=Philosopher&family=Signika+Negative:wght@400;500;700&family=Supermercado+One&family=Trade+Winds&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Grenze+Gotisch&family=PT+Sans+Caption:wght@400;700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&family=Roboto+Slab:wght@400;700&family=Trade+Winds&display=swap");
 
-/* fonts: (only used fonts will be imported by project end)
-El Messiri (400, 700)
-Fira Sans (400, 500, 700, 400 italic)
-Gruppo 
-PT Sans Caption
-PT Sans (400, 400 italic)
-Philosopher
-Siginka Negative (400, 500, 700)
-Supermercado One
-Trade Winds
-Grenze Gotisch
+/*
+- Imported Fonts (and styles):
+Grenze Gotisch (Regular 400),
+PT Sans Caption (Regular 400, Bold 700),
+PT Sans (Regular 400, Regular 400 Italic, Bold 700, Bold 700 Italic),
+Philosopher (Regular 400, Regular 400 Italic, Bold 700, Bold 700 Italic),
+Roboto Slab (Regular 400, Bold 700),
+Trade Winds (Regular 400)
 */
 
 :root {
-  /* fonts */
   --navbar-font: "Trade Winds";
   --button-font: "Trade Winds";
   --title-font: "Grenze Gotisch";
   --content-font: "PT Sans";
   --caption-font: "PT Sans Caption";
 
-  /* colors */
+  --searchbar-white: #ffffff;
   --light-gray: #d8dae5;
   --med-gray: #a0a1a2;
   --bright-yellow: #ffff00;
@@ -61,13 +57,18 @@ Grenze Gotisch
     rgba(160, 161, 162, 1) 0%,
     rgba(180, 181, 182, 1) 100%
   );
+  --border: 1.5px double rgba(0, 0, 0, 0.3);
+  --border-radius-square: 3px;
+  --box-shadow:  0px 0px 5px  rgba(0, 0, 0, 0.5);
+  --box-shadow-btn: 0px 0px 10px 1px rgba(0, 0, 0, 0.75),
+    inset 0px 0px 10px 3px rgba(0, 0, 0, 0.75);
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: var(--content-font), -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding-top: 4rem;

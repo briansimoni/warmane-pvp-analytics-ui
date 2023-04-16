@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, Spinner } from "react-bootstrap";
 import { useAppSelector } from "../app/hooks";
 import { SearchStatus } from "../features/search/search-slice";
-import "./stylesheets/statCard.css";
-import styles from "./stylesheets/nonStatText.module.css";
+import "../App.css";
 
 function DogPicture() {
   const state = useAppSelector((e) => e);
@@ -60,7 +59,7 @@ function DogPicture() {
   }
 
   return (
-    <Card className={styles.card}>
+    <Card>
       <Card style={{ width: "18rem" }}>
         <Card.Img variant="top" src={image} />
         <Card.Body>
@@ -69,7 +68,7 @@ function DogPicture() {
               {character} IRL
             </Card.Title>
           </Card.ImgOverlay>
-          <Card.Text>
+          <Card.Text className="text-center">
             Using state-of-the-art <strong>machine learning</strong> procedure
             and a <i>touch</i> of <strong>AI</strong>, our algorithms construct
             photorealistic representations of what someone looks like{" "}

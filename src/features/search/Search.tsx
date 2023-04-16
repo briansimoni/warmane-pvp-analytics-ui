@@ -1,8 +1,6 @@
-//Search.tsx
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import "./Search.css";
 import { dogBreedsArr } from "../../components/assets/dogBreedsArr";
 import { crawl, CrawlStatus } from "../crawl/crawl-slice";
 import {
@@ -13,6 +11,8 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import SearchLabel from "./SearchLabel";
+import "../../App.css";
 
 type ComponentState = "loading" | "error" | "idle" | "done";
 
@@ -74,6 +74,14 @@ function Search() {
 
   function handleRealmChange(event: React.FormEvent<HTMLInputElement>) {
     setRealm(event.currentTarget.value);
+  }
+
+  function handleMouseEnter(event: React.MouseEvent<HTMLLabelElement>) {
+    setHoveredRealm(event.currentTarget.htmlFor);
+  }
+
+  function handleMouseLeave() {
+    setHoveredRealm(null);
   }
 
   function handleSubmit(event: React.FormEvent) {
@@ -159,16 +167,13 @@ function Search() {
                   checked={realm === "Blackrock"}
                   onChange={handleRealmChange}
                 />
-                <label
-                  htmlFor="blackrock-radio"
-                  className={`radio-label blackrock${
-                    realm === "Icecrown" ? " anti-selected-realm" : ""
-                  }${hoveredRealm === "Icecrown" ? " anti-hovered-realm" : ""}`}
-                  onMouseEnter={() => setHoveredRealm("Blackrock")}
-                  onMouseLeave={() => setHoveredRealm(null)}
-                >
-                  Blackrock
-                </label>
+                <SearchLabel
+                  hoveredRealm={hoveredRealm}
+                  htmlFor="Blackrock"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  selectedRealm={realm}
+                />
               </div>
             </Col>
             <Col className="d-flex justify-content-center">
@@ -176,23 +181,18 @@ function Search() {
                 <input
                   className="custom-form-check"
                   type="radio"
-                  id="icecrown-radio"
-                  value="Icecrown"
-                  checked={realm === "Icecrown"}
+                  id="iceclown-radio"
+                  value="iceclown"
+                  checked={realm === "iceclown"}
                   onChange={handleRealmChange}
                 />
-                <label
-                  htmlFor="icecrown-radio"
-                  className={`radio-label icecrown${
-                    realm === "Blackrock" ? " anti-selected-realm" : ""
-                  }${
-                    hoveredRealm === "Blackrock" ? " anti-hovered-realm" : ""
-                  }`}
-                  onMouseEnter={() => setHoveredRealm("Icecrown")}
-                  onMouseLeave={() => setHoveredRealm(null)}
-                >
-                  Icecrown
-                </label>
+                <SearchLabel
+                  hoveredRealm={hoveredRealm}
+                  htmlFor="iceclown"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  selectedRealm={realm}
+                />
               </div>
             </Col>
           </Row>
