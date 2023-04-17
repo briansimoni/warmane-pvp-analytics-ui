@@ -31,7 +31,7 @@ export function convertIntClassToString(wowClass: WowClass) {
 
 /**
  * Given an array of MatchHistory, this will return
- * a new array of MatchHistory where the the charachter_details
+ * a new array of MatchHistory where the the character_details
  * only contains enemy teams
  * @param matches
  * @returns {MatchDetails[]}

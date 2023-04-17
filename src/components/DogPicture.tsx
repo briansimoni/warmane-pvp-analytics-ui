@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { Card, Spinner } from "react-bootstrap";
 import { useAppSelector } from "../app/hooks";
 import { SearchStatus } from "../features/search/search-slice";
+import "../App.css";
 
 function DogPicture() {
   const state = useAppSelector((e) => e);
-  const { status, matches, charachter } = state.search;
+  // Extracting data from Redux store using useAppSelector hook
+  const { status, matches, character } = state.search;
   const [image, setImage] = useState("");
 
   useEffect(() => {
@@ -15,13 +17,14 @@ function DogPicture() {
       const j = await response.json();
       setImage(j.message);
     }
-    if (!charachter) {
+    if (!character) {
       setImage("");
     }
-    if (charachter) {
+    if (character) {
       getDogPicture();
     }
-  }, [charachter]);
+    // Running the effect whenever 'character' changes
+  }, [character]);
 
   if (status === SearchStatus.FAILED) {
     return (
@@ -60,11 +63,16 @@ function DogPicture() {
       <Card style={{ width: "18rem" }}>
         <Card.Img variant="top" src={image} />
         <Card.Body>
-          <Card.Title>{charachter} IRL</Card.Title>
-          <Card.Text>
-            Using advanced <strong>Machine Learning</strong> and{" "}
-            <strong>AI</strong>, we can determine exactly what someone looks
-            like <strong>in real life</strong>
+          <Card.ImgOverlay className="img-overlay">
+            <Card.Title className="img-overlay--text">
+              {character} IRL
+            </Card.Title>
+          </Card.ImgOverlay>
+          <Card.Text className="text-center">
+            Using state-of-the-art <strong>machine learning</strong> procedure
+            and a <i>touch</i> of <strong>AI</strong>, our algorithms construct
+            photorealistic representations of what someone looks like{" "}
+            <strong>in real life</strong>.
           </Card.Text>
         </Card.Body>
       </Card>

@@ -1,10 +1,12 @@
 import { Card, Spinner } from "react-bootstrap";
 import { useAppSelector } from "../app/hooks";
 import { SearchStatus } from "../features/search/search-slice";
+import ListGroup from "react-bootstrap/ListGroup";
+import "../App.css";
 
 function Summary() {
   const state = useAppSelector((e) => e);
-  const { status, matches, charachter } = state.search;
+  const { status, matches, character } = state.search;
 
   if (status === SearchStatus.FAILED) {
     return (
@@ -45,24 +47,46 @@ function Summary() {
   const winRate = (matches.length - totalLosses) / matches.length;
   const winRatePercentage = Math.round(winRate * 100);
 
+
   return (
     <Card>
       <Card.Body>
-        <Card.Title>Total Games</Card.Title>
-        <h2 id="total-losses-value">{matches.length}</h2>
-        <Card.Text>
-          The total amount games played by {charachter} this season. Wow! That
-          is a lot of games. {charachter} needs to get outside.
-        </Card.Text>
-        <Card.Title>Total Losses</Card.Title>
-        <h2 id="total-losses-value">{totalLosses}</h2>
-        <Card.Text>
-          The total amount of times {charachter} <strong>lost</strong> this
-          season
-        </Card.Text>
-        <Card.Title>Win Rate</Card.Title>
-        <h2 id="total-losses-value">{winRatePercentage}%</h2>
-        <Card.Text>pathetic...</Card.Text>
+        <ListGroup variant="flush">
+          <Card.Header>
+            Total Games:{" "}
+            <h2 className="card-stat-value" id="total-matches-played">
+              {matches.length}
+            </h2>
+          </Card.Header>
+          <ListGroup.Item>
+            <Card.Text>
+              That's how many games {character} played <i>this season</i>. Wow!
+              That's a lot, probably too many games. {character} needs to touch
+              some grass.
+            </Card.Text>
+          </ListGroup.Item>
+          <Card.Header>
+            Total Losses:{" "}
+            <h2 className="card-stat-value" id="total-losses">
+              {totalLosses}
+            </h2>
+          </Card.Header>
+          <ListGroup.Item>
+            <Card.Text>
+              If it wasn't obvious already that {character} is a loser, this is
+              proof.
+            </Card.Text>
+          </ListGroup.Item>
+          <Card.Header>
+            Win Rate:{" "}
+            <h2 className="card-stat-value" id="win-rate-percentage">
+              {winRatePercentage}%
+            </h2>
+          </Card.Header>
+          <ListGroup.Item>
+            <Card.Text>Hopefully there's a grading curve...</Card.Text>
+          </ListGroup.Item>
+        </ListGroup>
       </Card.Body>
     </Card>
   );

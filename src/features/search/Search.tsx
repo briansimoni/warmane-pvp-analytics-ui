@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { dogBreedsArr } from "../../components/assets/dogBreedsArr";
 import { crawl, CrawlStatus } from "../crawl/crawl-slice";
 import {
   clearMatchHistory,
@@ -8,13 +9,17 @@ import {
   SearchStatus,
 } from "./search-slice";
 import { useNavigate, useParams } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import SearchLabel from "./SearchLabel";
+import "../../App.css";
 
 type ComponentState = "loading" | "error" | "idle" | "done";
 
 function Search() {
   const dispatch = useAppDispatch();
-  const [charachter, setCharachter] = useState("");
-  const [realm, setRealm] = useState("Blackrock");
+  const [character, setCharacter] = useState("");
+  const [realm, setRealm] = useState("");
   const [progress, setProgress] = useState(0);
   const state = useAppSelector((e) => e);
   const navigate = useNavigate();
@@ -22,22 +27,23 @@ function Search() {
   const matches = state.search.matches;
   const crawlStatus = state.crawl.status;
   const [componentState, setComponentState] = useState<ComponentState>("idle");
+  const [hoveredRealm, setHoveredRealm] = useState<string | null>(null);
 
   const params = useParams();
 
   useEffect(() => {
-    async function search(charachter: string, realm: string) {
+    async function search(character: string, realm: string) {
       setComponentState("loading");
       await dispatch(
         crawl({
-          charachter,
+          character,
           realm,
         })
       );
 
       await dispatch(
         getMatchHistory({
-          charachter,
+          character,
           realm,
         })
       );
@@ -45,17 +51,17 @@ function Search() {
     }
     if (
       params.realm &&
-      params.charachter &&
+      params.character &&
       componentState !== "done" &&
       componentState !== "loading"
     ) {
-      search(params.charachter, params.realm);
+      search(params.character, params.realm);
     }
   }, [
-    charachter,
+    character,
     componentState,
     dispatch,
-    params.charachter,
+    params.character,
     params.realm,
     realm,
     matches,
@@ -63,11 +69,19 @@ function Search() {
 
   function handleChange(event: React.FormEvent<HTMLInputElement>) {
     const c = event.currentTarget.value;
-    setCharachter(c.trim());
+    setCharacter(c.trim());
   }
 
   function handleRealmChange(event: React.FormEvent<HTMLInputElement>) {
     setRealm(event.currentTarget.value);
+  }
+
+  function handleMouseEnter(event: React.MouseEvent<HTMLLabelElement>) {
+    setHoveredRealm(event.currentTarget.htmlFor);
+  }
+
+  function handleMouseLeave() {
+    setHoveredRealm(null);
   }
 
   function handleSubmit(event: React.FormEvent) {
@@ -78,13 +92,13 @@ function Search() {
     ) {
       return;
     }
-    if (charachter === "") {
+    if (character === "") {
       return;
     }
     dispatch(clearMatchHistory());
     setComponentState("idle");
-    const replace = !!params.charachter;
-    navigate(`/p/${realm}/${charachter}`, {
+    const replace = !!params.character;
+    navigate(`/p/${realm}/${character}`, {
       replace,
     });
   }
@@ -100,17 +114,33 @@ function Search() {
     }
   }, [crawlStatus, progress, setProgress]);
 
+  const randomIndex = Math.floor(Math.random() * dogBreedsArr.length);
+
   return (
     <Form onSubmit={handleSubmit}>
       <Row>
         <Col>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Group className="mb-3 searchbar" controlId="formBasicEmail">
             <input
-              className="form-control"
+              className="form-control searchbar-text"
               type="text"
               onChange={handleChange}
-              value={charachter}
+              value={character}
+              placeholder={dogBreedsArr[randomIndex]}
             />
+            <Button
+              variant="primary"
+              type="submit"
+              id="character-search-btn"
+              disabled={!realm || !character}
+              className={!realm || !character ? "disabled" : ""}
+            >
+              {" "}
+              <FontAwesomeIcon
+                className="fa_icon fa_magnifying-glass"
+                icon={faMagnifyingGlass}
+              />
+            </Button>
           </Form.Group>
           {CrawlStatus.LOADING === crawlStatus && (
             <>
@@ -126,27 +156,46 @@ function Search() {
               <Alert variant="warning">{state.crawl.error.message}</Alert>
             </>
           )}
-          <Form.Check
-            value="Blackrock"
-            checked={realm === "Blackrock"}
-            type={"radio"}
-            id={"blackrock-radio"}
-            label={"Blackrock"}
-            onChange={handleRealmChange}
-          />
-          <Form.Check
-            value="icecrown"
-            checked={realm === "icecrown"}
-            type={"radio"}
-            id={`icecrown-radio`}
-            label={"Iceclown"}
-            onChange={handleRealmChange}
-          />
-        </Col>
-        <Col lg="2">
-          <Button variant="primary" type="submit">
-            Search
-          </Button>
+          <Row className="d-flex justify-content-center">
+            <Col className="d-flex justify-content-center">
+              <div className="radio-container">
+                <input
+                  className="custom-form-check"
+                  type="radio"
+                  id="blackrock-radio"
+                  value="Blackrock"
+                  checked={realm === "Blackrock"}
+                  onChange={handleRealmChange}
+                />
+                <SearchLabel
+                  hoveredRealm={hoveredRealm}
+                  htmlFor="Blackrock"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  selectedRealm={realm}
+                />
+              </div>
+            </Col>
+            <Col className="d-flex justify-content-center">
+              <div className="radio-container">
+                <input
+                  className="custom-form-check"
+                  type="radio"
+                  id="iceclown-radio"
+                  value="iceclown"
+                  checked={realm === "iceclown"}
+                  onChange={handleRealmChange}
+                />
+                <SearchLabel
+                  hoveredRealm={hoveredRealm}
+                  htmlFor="iceclown"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  selectedRealm={realm}
+                />
+              </div>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </Form>

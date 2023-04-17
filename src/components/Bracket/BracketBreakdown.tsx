@@ -9,7 +9,6 @@ import {
 } from "../../util/MatchDetailsUtil";
 import BracketPieChart from "./BracketPieChart";
 import { CompImages } from "./CompImages";
-
 interface BracketBreakdownConfig {
   bracket: "2v2" | "3v3" | "5v5";
   title: string;
@@ -132,8 +131,13 @@ function BracketBreakdown(props: BracketBreakdownConfig) {
   return (
     <>
       <BracketPieChart {...props} />
-
-      <DataTable columns={columns} data={niceData} dense pagination />
+      <DataTable
+        className="data-table"
+        columns={columns}
+        data={niceData}
+        dense
+        pagination
+      />
     </>
   );
 }

@@ -13,7 +13,7 @@ export enum CrawlStatus {
 }
 
 export interface CrawlState {
-  charachter: string;
+  character: string;
   realm: string;
   status: CrawlStatus;
   crawlFinished: boolean;
@@ -21,7 +21,7 @@ export interface CrawlState {
 }
 
 const initialState: CrawlState = {
-  charachter: "",
+  character: "",
   realm: "",
   status: CrawlStatus.IDLE,
   crawlFinished: false,
@@ -29,20 +29,20 @@ const initialState: CrawlState = {
 };
 
 interface ApiThunkParams {
-  charachter: string;
+  character: string;
   realm: string;
 }
 
 /**
  * This function will attempt to start a crawl and then update state
  * upon completion. It is up to the caller to determine if initiating
- * a crawl for a particular charachter is allowed
+ * a crawl for a particular character is allowed
  */
 export const crawl = createAsyncThunk(
   "crawl",
   async (params: ApiThunkParams) => {
     const response = await waitForCrawlToComplete(
-      params.charachter,
+      params.character,
       params.realm
     );
     return response;
@@ -61,7 +61,7 @@ export const searchSlice = createSlice({
       })
       .addCase(crawl.fulfilled, (state, action) => {
         state.status = CrawlStatus.IDLE;
-        state.charachter = action.meta.arg.charachter;
+        state.character = action.meta.arg.character;
         state.realm = action.meta.arg.realm;
         state.crawlFinished = true;
       })
