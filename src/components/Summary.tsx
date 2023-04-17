@@ -47,7 +47,6 @@ function Summary() {
   const winRate = (matches.length - totalLosses) / matches.length;
   const winRatePercentage = Math.round(winRate * 100);
 
-
   return (
     <Card>
       <Card.Body>

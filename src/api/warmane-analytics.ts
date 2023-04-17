@@ -129,10 +129,7 @@ async function getMatchData(character: string, realm: string) {
   return result.data;
 }
 
-async function shouldCrawl(
-  character: string,
-  realm: string
-): Promise<boolean> {
+async function shouldCrawl(character: string, realm: string): Promise<boolean> {
   realm = capitalize(realm);
   character = capitalize(character);
   const response = await getCharacter(character, realm);
