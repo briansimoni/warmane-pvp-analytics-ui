@@ -127,7 +127,7 @@ function BracketPieChart(props: BracketBreakdownConfig) {
   return (
     <>
       <Row>
-        <Col>
+        <Col xs={12} sm={6}>
           <Card>
             <Card.Header>Legend</Card.Header>
             <Card.Body>
@@ -146,11 +146,15 @@ function BracketPieChart(props: BracketBreakdownConfig) {
             </Card.Body>
           </Card>
         </Col>
-        <Col>
+        <Col xs={12} sm={6}>
           <Card id="losses-over-time-card">
-            <Card.Body>
+            <Card.Body className="chart-card-body">
               <Card.Title>({props.bracket})</Card.Title>
-              <ResponsiveContainer width="100%" height="90%">
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+                className="chart-padding"
+              >
                 <PieChart>
                   <Pie
                     data={pieChartData}

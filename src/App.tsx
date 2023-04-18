@@ -51,6 +51,7 @@ function App() {
         </div>
 
         {/* 2v2 */}
+
         <div className="bracket-divider">
           <Row>
             <Col>
@@ -63,6 +64,7 @@ function App() {
             </Col>
           </Row>
         </div>
+
         <div className="bracket-divider">
           <Row>
             <Col>

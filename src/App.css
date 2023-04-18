@@ -25,10 +25,6 @@ h2 {
   align-items: center;
 }
 
-.row:not(:last-child) {
-  margin-bottom: 15px;
-}
-
 /** Cards **/
 
 #losses-over-time-card {
@@ -37,80 +33,81 @@ h2 {
 }
 
 .card {
-  margin: 1rem auto;
   display: flex;
   justify-content: center;
   background: var(--med-gray-bg);
   box-shadow: var(--box-shadow);
+  margin: 1rem auto;
 }
 
 .card-body {
+  background: var(--light-gray-bg);
   font-family: var(--content-font);
   font-weight: 500;
   border: var(--border);
   border-radius: var(--border-radius-square);
-  background: var(--light-gray-bg);
 }
 
 .card-title {
   font-style: italic;
+  background-color: transparent;
 }
 
 .card-header {
-  font-style: italic;
-  align-items: center;
   display: flex;
   flex-direction: row;
+  font-style: italic;
+  align-items: center;
 }
 
 /* (React-Bootstrap Card type) */
 .list-group-item {
-  text-align: left;
-  width: 100%;
   display: flex;
   background-color: var(--canvas) !important;
+  text-align: left;
+  width: 100%;
 }
 
 /* main stat values in summary section (total games, total losses, win rate, nemesis) */
 .card-stat-value {
+  color: var(--red);
   font-style: normal;
   margin: auto;
-  color: var(--red);
 }
 
 /* overlaid image captions (dog picture) */
 .img-overlay--text {
-  font-style: unset;
-  font-weight: bold;
-  font-size: 1rem;
-  font-family: var(--caption-font);
   background-color: rgba(0, 0, 0, 0.4);
   color: var(--light-gray);
-  border-radius: var(--border-radius-square);
+  font-family: var(--caption-font);
+  font-size: 1rem;
+  font-weight: bold;
+  font-style: unset;
   padding: 0.3rem 0.5rem;
+  border-radius: var(--border-radius-square);
 }
 
 /** Navbar **/
 
 .navbar {
   position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--black-blue-bg);
   height: 4.5rem;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 99;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 1rem;
-  background: var(--black-blue-bg);
   box-shadow: var(--box-shadow);
+  z-index: 99;
 }
 
 #nav-brand-text {
+  color: var(--rich-yellow);
   font-family: var(--navbar-font);
   font-size: 1.5rem;
-  color: var(--rich-yellow);
 }
 
 .container {
@@ -118,18 +115,18 @@ h2 {
 }
 
 .found-dog-wrapper {
-  height: calc(100% + 32px);
-  width: 100%;
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  height: calc(100% + 32px);
+  width: 100%;
 }
 
 .img-fluid {
-  filter: contrast(80%);
   max-height: 75%;
   width: auto;
   object-fit: contain;
+  filter: contrast(80%);
 }
 
 .navbar-link {
@@ -142,6 +139,65 @@ h2 {
 
 /** Search **/
 
+/* moving search button inside of the search-bar */
+
+.searchbar-container {
+  position: relative;
+  background-color: var(--searchbar-white);
+  height: 2.5rem;
+  width: 100%;
+  margin: auto;
+  border-radius: var(--border-radius-square);
+}
+
+.searchbar-text {
+  position: absolute;
+  background-color: transparent;
+  height: 2.5rem;
+  width: 100%;
+  top: 0;
+  left: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.search-alert-container {
+  margin: 5px 0 0 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.alert {
+  background-color: var(--rich-yellow);
+  opacity: 0.8;
+  color: var(--dark-blue);
+  border: none;
+  box-shadow: var(--box-shadow);
+  font-family: var(--caption-font);
+  font-weight: 600;
+  font-size: 1.2rem;
+  font-style: italic;
+  text-align: center;
+  margin: 0;
+  padding: 10px;
+  border-radius: var(--border-radius-square);
+}
+
+/* styling search button, including on hover and focus */
+#character-search-btn {
+  position: absolute;
+  background-color: transparent;
+  height: 2.5rem;
+  width: 4%;
+  top: 0;
+  right: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
 /* search disabled (realm || character missing) */
 #character-search-btn.disabled {
   cursor: not-allowed;
@@ -150,36 +206,6 @@ h2 {
 
 #character-search-btn.disabled .fa_magnifying-glass {
   filter: sepia(50%);
-}
-
-.radio-container input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  z-index: 1;
-}
-
-/* moving search button inside of the search-bar */
-.searchbar {
-  display: flex;
-  background-color: var(--searchbar-white);
-  border-radius: var(--border-radius-square);
-  justify-content: space-between;
-}
-
-.searchbar-text {
-  width: 93.5%;
-  border: 0;
-  padding-right: 1rem;
-}
-
-/* styling search button, including on hover and focus */
-#character-search-btn {
-  background-color: var(--searchbar-white);
-  border: 0;
-  width: 5.5%;
 }
 
 #character-search-btn .fa_magnifying-glass {
@@ -217,6 +243,14 @@ h2 {
 
 /** Realm Selection Buttons **/
 
+.radio-container input[type="radio"] {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  margin: 0;
+  z-index: 1;
+}
 /* turning default radio buttons into all-in-one buttons */
 .radio-container {
   position: relative;
@@ -225,8 +259,8 @@ h2 {
 
 .radio-container .custom-form-check {
   position: absolute;
-  width: 100%;
   height: 100%;
+  width: 100%;
   top: 0;
   left: 0;
 }
@@ -234,17 +268,17 @@ h2 {
 .radio-label {
   display: flex;
   justify-content: center;
-  padding: 10px 20px;
+  background: var(--dark-blue-btn-bg);
+  color: var(--muted-yellow);
+  font-family: var(--button-font);
+  font-size: 1.5rem;
   width: 15rem;
+  padding: 10px 20px;
   margin: 5px;
   border-radius: var(--border-radius-square);
   box-shadow: var(--box-shadow-btn);
   border: var(--border);
-  font-family: var(--button-font);
-  font-size: 1.5rem;
   cursor: pointer;
-  color: var(--muted-yellow);
-  background: var(--dark-blue-btn-bg);
 }
 
 /* styling buttons on hover, when checked */
@@ -263,10 +297,43 @@ h2 {
   filter: blur(1px) saturate(50%);
 }
 
+/** Charts **/
+
+/* Pie Charts */
+.chart-card-body {
+  position: relative;
+  overflow: hidden;
+  height: 0;
+  padding-bottom: 50%;
+}
+.chart-padding {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Class Win Rate Charts */
+.chart-container {
+  height: 100%;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.chart-container > .card-body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 /** Media Queries **/
 
-/* tablets, phones, and smaller */
-@media only screen and (max-device-height: 768px) and (max-device-width: 1024px) {
+/* tablets and smaller */
+@media only screen and (max-device-height: 1025px) and (max-device-width: 769px) {
   /* aligning text to center */
   .main-container {
     text-align: center;
@@ -284,19 +351,12 @@ h2 {
     transform: translateY(-100%);
     transition: transform 0.3s ease-in-out;
   }
-
-  /* stopping default browser 'focus' outlines from overlapping in searchbar */
-  #character-search-btn {
-    padding-right: 1rem;
-  }
 }
 
-/*
-React-Bootstrap Breakpoints:
-  xs: <576px
-  s: >=576px
-  m: >=768px
-  l: >=992px
-  xl: >=1200px
-  xxl: >=1400px
-  */
+/* smartphones and smaller */
+@media only screen and (max-device-width: 450px) {
+  /* keeping search button's position in searchbar & focus outline consistent */
+  #character-search-btn {
+    width: 11%;
+  }
+}
