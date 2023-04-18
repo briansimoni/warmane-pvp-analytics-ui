@@ -60,7 +60,7 @@ function DogPicture() {
 
   return (
     <Card>
-      <Card style={{ width: "18rem" }}>
+      <Card>
         <Card.Img variant="top" src={image} />
         <Card.Body>
           <Card.ImgOverlay className="img-overlay">

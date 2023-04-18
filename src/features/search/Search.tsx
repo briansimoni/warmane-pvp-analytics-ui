@@ -118,44 +118,48 @@ function Search() {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Row>
+      <Row className="d-flex justify-content-center">
         <Col>
-          <Form.Group className="mb-3 searchbar" controlId="formBasicEmail">
-            <input
-              className="form-control searchbar-text"
-              type="text"
-              onChange={handleChange}
-              value={character}
-              placeholder={dogBreedsArr[randomIndex]}
-            />
-            <Button
-              variant="primary"
-              type="submit"
-              id="character-search-btn"
-              disabled={!realm || !character}
-              className={!realm || !character ? "disabled" : ""}
-            >
-              {" "}
-              <FontAwesomeIcon
-                className="fa_icon fa_magnifying-glass"
-                icon={faMagnifyingGlass}
+          <Row className="justify-self-center searchbar-container">
+            <Form.Group controlId="formBasicEmail">
+              <input
+                className="form-control searchbar-text"
+                type="text"
+                onChange={handleChange}
+                value={character}
+                placeholder={dogBreedsArr[randomIndex]}
               />
-            </Button>
-          </Form.Group>
-          {CrawlStatus.LOADING === crawlStatus && (
-            <>
-              {/* <ProgressBar now={progress} /> */}
-              <Alert variant="primary">
-                Crawling warmane.com for data. This may take a minute. Time
-                elapsed: {progress}s
-              </Alert>
-            </>
-          )}
-          {CrawlStatus.FAILED === crawlStatus && (
-            <>
-              <Alert variant="warning">{state.crawl.error.message}</Alert>
-            </>
-          )}
+              <Button
+                variant="primary"
+                type="submit"
+                id="character-search-btn"
+                disabled={!realm || !character}
+                className={!realm || !character ? "disabled" : ""}
+              >
+                {" "}
+                <FontAwesomeIcon
+                  className="fa_icon fa_magnifying-glass"
+                  icon={faMagnifyingGlass}
+                />
+              </Button>
+            </Form.Group>
+          </Row>
+          <Row className="search-alert-container">
+            {CrawlStatus.LOADING === crawlStatus && (
+              <>
+                {/* <ProgressBar now={progress} /> */}
+                <Alert className="search-alert" variant="primary">
+                  Crawling warmane.com for data. This may take a minute. Time
+                  elapsed: {progress}s
+                </Alert>
+              </>
+            )}
+            {CrawlStatus.FAILED === crawlStatus && (
+              <>
+                <Alert variant="warning">{state.crawl.error.message}</Alert>
+              </>
+            )}
+          </Row>
           <Row className="d-flex justify-content-center">
             <Col className="d-flex justify-content-center">
               <div className="radio-container">
