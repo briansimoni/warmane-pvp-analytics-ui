@@ -1,67 +1,110 @@
 import Axios from "axios";
+import { /*CharacterName,*/ CharacterId, Realm } from "./types";
 
-export interface MatchDetails {
-  team_name: string;
-  date: string;
-  bracket: string;
-  arena: string;
-  points_change: string;
-  character_details: CharacterDetail[]; // | undefined[]; I don't think it can be undefined
-  id: string;
-  outcome: string;
-  duration: string;
-  team?: string;
+// //todo getCharacterMetadata (implement)
+// interface SingleCharacterMeta {
+//   id: CharacterId;
+//   name: CharacterName;
+//   realm: Realm;
+//   games_played?: number;
+// }
+// //todo: queryCharacterMetadata (implement)
+// interface CharacterMetaArray extends Array<SingleCharacterMeta> {}
+
+// //? may be unnecessary
+// interface CharacterMeta extends SingleCharacterMeta {}
+// type CharacterMetaUnion = CharacterMeta | CharacterMetaArray;
+
+//todo: getCharacterStats (implement)
+export interface ArenaStats {
+  "Arenas won"?: number;
+  "Arenas played"?: number;
+  "5v5 matches"?: number;
+  "5v5 victories"?: number;
+  "3v3 matches"?: number;
+  "3v3 victories"?: number;
+  "2v2 matches"?: number;
+  "2v2 victories"?: number;
+  "Circle of Blood matches"?: number;
+  "Circle of Blood victories"?: number;
+  "Dalaran Sewers matches"?: number;
+  "Dalaran Sewers victories"?: number;
+  "Ring of Trials matches"?: number;
+  "Ring of Trials victories"?: number;
+  "Ring of Valor matches"?: number;
+  "Ring of Valor victories"?: number;
+  "Ruins of Lordaeron matches"?: number;
+  "Ruins of Lordaeron victories"?: number;
+  "Highest 5 man personal rating"?: number;
+  "Highest 3 man personal rating"?: number;
+  "Highest 2 man personal rating"?: number;
+  "Highest 5 man team rating"?: number;
+  "Highest 3 man team rating"?: number;
+  "Highest 2 man team rating"?: number;
 }
 
+//todo: getCrawlerState (implement)
+export interface CrawlerState {
+  id: CharacterId;
+  state: "pending" | "running" | "idle" | "errored";
+  crawler_last_started?: string;
+  crawler_last_finished?: string;
+  crawler_errors?: string[];
+}
+
+// getMatchData
 export interface CharacterDetail {
-  matchmaking_change?: string;
-  healingDone: string;
-  race?: string;
-  gender?: string;
-  killingBlows: string;
-  teamnamerich: string;
-  realm: string;
-  damageDone: string;
+  realm: Realm;
   charname: string;
   class?: string;
-  deaths: string;
-  personal_change: string;
+  race?: string;
+  gender?: string;
   teamname: string;
+  teamnamerich: string;
+  damageDone: string;
+  deaths: string;
+  healingDone: string;
+  killingBlows: string;
+  matchmaking_change?: string;
+  personal_change: string;
 }
 
-export interface CharacterStatus {
-  crawl_last_completed?: string;
-  crawl_in_progress: boolean;
-  id: string;
+export interface MatchDetailsResponse {
+  matches: MatchDetails[];
+  continuation_token?: string;
 }
 
-interface CrawlResponse {
-  message: string;
+export interface MatchDetails {
+  id: CharacterId;
+  matchId: string;
+  team_name: string;
+  bracket: string;
+  outcome: string;
+  points_change: string;
+  date: string;
+  duration: string;
+  arena: string;
+  character_details: CharacterDetail[];
 }
 
+// //* V2 Production
+// const api = Axios.create({
+//   baseURL: " https://3f4vzhst3h.execute-api.us-east-1.amazonaws.com/prod"
+// })
+
+//* V2 Development
 const api = Axios.create({
-  // baseURL: "https://21kqq2jgg7.execute-api.us-east-1.amazonaws.com/Prod",
-  baseURL: "https://vgepnlr2he.execute-api.us-east-1.amazonaws.com/Prod",
+  baseURL: "  https://0y910m5kad.execute-api.us-east-1.amazonaws.com/dev",
 });
 
-async function crawl(character: string, realm: string) {
+async function crawl(name: string, realm: string) {
   realm = capitalize(realm);
-  character = capitalize(character);
-  const result = await api.post<CrawlResponse>("/crawl", {
-    char: character,
+  name = capitalize(name);
+  const result = await api.post("/crawl", {
+    name,
     realm,
   });
   return result;
-}
-
-/**
- * the timestamp I'm returning from the API is kind of dumb
- */
-function convertTimestampToDate(timestamp: string) {
-  const split = timestamp.split(".");
-  const seconds = split[0];
-  const ms = parseInt(seconds) * 1000;
-  return new Date(ms);
 }
 
 function sleep(ms: number) {
@@ -79,16 +122,11 @@ function capitalize(s: string) {
   return s[0].toUpperCase() + s.slice(1);
 }
 
-/**
- * Polls the API and resolves when the crawl is completed
- * @param character
- * @param realm
- */
-async function waitForCrawlToComplete(character: string, realm: string) {
-  if (!(await shouldCrawl(character, realm))) {
+async function waitForCrawlToComplete(name: string, realm: string) {
+  if (!(await shouldCrawl(name, realm))) {
     return;
   }
-  await crawl(character, realm);
+  await crawl(name, realm);
   let done = false;
   let elapsed = 0;
   while (!done) {
@@ -99,56 +137,75 @@ async function waitForCrawlToComplete(character: string, realm: string) {
     }
     await sleep(1000);
     elapsed += 1000;
-    const response = await getCharacter(character, realm);
-    // If we trigger the asynchronous lambda, and we query faster
-    // than that lambda writes a message that the crawl has started
+    const response = await getCrawlerState(name, realm);
+
+    // if we trigger the async lambda & query before it can write `crawler_last_started`
     if (response.data === null) {
       continue;
     }
-    if (!response.data.crawl_in_progress) {
+    if (!response.data.crawler_last_started) {
       done = true;
     }
   }
 }
 
-async function getCharacter(character: string, realm: string) {
+async function getCrawlerState(name: string, realm: string) {
   realm = capitalize(realm);
-  character = capitalize(character);
-  const result = await api.get<CharacterStatus | null>(
-    `/character/${character}@${realm}`
+  name = capitalize(name);
+  const result = await api.get<CrawlerState | null>(
+    `/character/crawl-state?name=${name}&realm=${realm}`
   );
   return result;
 }
 
-async function getMatchData(character: string, realm: string) {
+async function getMatchData(
+  name: string,
+  realm: string,
+  continuation_token?: string
+) {
   realm = capitalize(realm);
-  character = capitalize(character);
-  const result = await api.get<MatchDetails[]>(
-    `/matches/${character}@${realm}`
-  );
-  return result.data;
+  name = capitalize(name);
+
+  let url = `/character/matches?name=${name}&realm=${realm}`;
+
+  if (continuation_token) {
+    url += `&continuation_token=${continuation_token}`;
+  }
+
+  const result = await api.get<MatchDetailsResponse>(url);
+
+  return result;
 }
 
-async function shouldCrawl(character: string, realm: string): Promise<boolean> {
+async function shouldCrawl(name: string, realm: string): Promise<boolean> {
   realm = capitalize(realm);
-  character = capitalize(character);
-  const response = await getCharacter(character, realm);
-  if (response.data?.crawl_last_completed) {
-    if (crawledInLast24Hours(response.data.crawl_last_completed)) {
+  name = capitalize(name);
+  // get crawler state (for specified character)
+  const response = await getCrawlerState(name, realm);
+  // if it has property 'crawler_last_finished')
+  if (response.data?.crawler_last_finished) {
+    // check if the crawl was done in last 24 hours
+    if (crawledInLast24Hours(response.data.crawler_last_finished)) {
+      // if it has crawled in last 24 hours -> 'shouldCrawl' = false
       return false;
     }
   }
+  // else -> 'shouldCrawl' = true
   return true;
 }
 
-function crawledInLast24Hours(crawlLastCompleted: string): boolean {
-  if (crawlLastCompleted) {
-    const then = convertTimestampToDate(crawlLastCompleted);
+function crawledInLast24Hours(crawlerLastFinished: string): boolean {
+  // if character metadata has property `crawler_last_finished`
+  if (crawlerLastFinished) {
+    // date object representing crawlerLastFinished
+    const then = new Date(crawlerLastFinished);
+    // date object representing present time
     const now = new Date();
 
+    // gets difference in ms between then and now
     const msBetweenDates = Math.abs(then.getTime() - now.getTime());
 
-    // 👇️ convert ms to hours                  min  sec   ms
+    // 👇️ converts ms to hours                 min  sec    ms
     const hoursBetweenDates = msBetweenDates / (60 * 60 * 1000);
 
     if (hoursBetweenDates < 24) {
@@ -158,9 +215,4 @@ function crawledInLast24Hours(crawlLastCompleted: string): boolean {
   return false;
 }
 
-export {
-  getMatchData,
-  getCharacter,
-  waitForCrawlToComplete,
-  convertTimestampToDate,
-};
+export { getMatchData, getCrawlerState, waitForCrawlToComplete };
