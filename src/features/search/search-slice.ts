@@ -54,8 +54,8 @@ export const searchSlice = createSlice({
         state.status = SearchStatus.IDLE;
         state.character = action.meta.arg.character;
         state.realm = action.meta.arg.realm;
-        if (action.payload) {
-          state.matches = action.payload;
+        if (action.payload && action.payload.data) {
+          state.matches = action.payload.data.matches;
         }
       })
       .addCase(getMatchHistory.rejected, (state) => {
