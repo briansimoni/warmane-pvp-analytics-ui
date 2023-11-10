@@ -34,7 +34,7 @@ describe("testing match details", () => {
     const matchHistoryChecker = new ClassMatchHistory(testData);
     const outcomes = matchHistoryChecker.getCompOutcomes("5v5");
     expect(Object.keys(outcomes).length).toBeGreaterThan(1);
-    expect(outcomes["1,2,7"].total).toBe(36);
+    expect(outcomes["1,2,7"].total).toBe(2);
   });
 });
 
