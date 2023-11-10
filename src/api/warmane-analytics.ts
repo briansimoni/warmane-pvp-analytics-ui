@@ -1,16 +1,33 @@
 import Axios from "axios";
+import dayjs from "dayjs";
+
+export type CharacterName = string;
+
+export const Realms = [
+  "Blackrock",
+  "Icecrown",
+  "Lordaeron",
+  "Frostmourne",
+] as const;
+
+export type Realm = typeof Realms[number];
+
+export type CharacterId = `${CharacterName}@${Realm}`;
 
 export interface MatchDetails {
+  id: CharacterId;
+  document_key: string;
+  created_at: string;
+  updated_at: string;
+  matchId: string;
   team_name: string;
-  date: string;
   bracket: string;
-  arena: string;
-  points_change: string;
-  character_details: CharacterDetail[]; // | undefined[]; I don't think it can be undefined
-  id: string;
   outcome: string;
+  points_change: string;
+  date: string;
   duration: string;
-  team?: string;
+  arena: string;
+  character_details: CharacterDetail[];
 }
 
 export interface CharacterDetail {
@@ -29,29 +46,34 @@ export interface CharacterDetail {
   teamname: string;
 }
 
+interface GetCrawlerStatusResponse {
+  state: "pending" | "running" | "idle" | "errored";
+  crawler_last_finished: string;
+  crawler_last_started: string;
+}
+
 export interface CharacterStatus {
   crawl_last_completed?: string;
   crawl_in_progress: boolean;
   id: string;
 }
 
-interface CrawlResponse {
-  message: string;
-}
+const BASE_URL =
+  process.env.NODE_ENV !== "production"
+    ? "https://dev.api.warmane.dog/"
+    : "https://api.warmane.dog/";
 
 const api = Axios.create({
-  // baseURL: "https://21kqq2jgg7.execute-api.us-east-1.amazonaws.com/Prod",
-  baseURL: "https://vgepnlr2he.execute-api.us-east-1.amazonaws.com/Prod",
+  baseURL: BASE_URL,
 });
 
-async function crawl(character: string, realm: string) {
+async function crawl(character: string, realm: string): Promise<void> {
   realm = capitalize(realm);
   character = capitalize(character);
-  const result = await api.post<CrawlResponse>("/crawl", {
-    char: character,
+  await api.post("/crawl", {
+    name: character,
     realm,
   });
-  return result;
 }
 
 /**
@@ -99,42 +121,61 @@ async function waitForCrawlToComplete(character: string, realm: string) {
     }
     await sleep(1000);
     elapsed += 1000;
-    const response = await getCharacter(character, realm);
+    const response = await getCrawlerStatus({ character, realm });
     // If we trigger the asynchronous lambda, and we query faster
     // than that lambda writes a message that the crawl has started
-    if (response.data === null) {
+    if (["running", "pending"].includes(response.state)) {
       continue;
     }
-    if (!response.data.crawl_in_progress) {
+    if (response.state === "idle") {
       done = true;
     }
   }
 }
 
-async function getCharacter(character: string, realm: string) {
+async function getCrawlerStatus(params: {
+  character: string;
+  realm: string;
+}): Promise<GetCrawlerStatusResponse> {
+  let { character, realm } = params;
   realm = capitalize(realm);
   character = capitalize(character);
-  const result = await api.get<CharacterStatus | null>(
-    `/character/${character}@${realm}`
-  );
-  return result;
-}
-
-async function getMatchData(character: string, realm: string) {
-  realm = capitalize(realm);
-  character = capitalize(character);
-  const result = await api.get<MatchDetails[]>(
-    `/matches/${character}@${realm}`
+  const result = await api.get<GetCrawlerStatusResponse>(
+    `/character/crawl-state?name=${character}&realm=${realm}`
   );
   return result.data;
+}
+
+type GetMatchDetailsResult = {
+  continuation_token: boolean;
+  matches: MatchDetails[];
+};
+
+async function getMatchData(
+  character: string,
+  realm: string
+): Promise<MatchDetails[]> {
+  realm = capitalize(realm);
+  character = capitalize(character);
+  const matchDetails = [];
+  let result = await api.get<GetMatchDetailsResult>(
+    `character/matches/?name=${character}&realm=${realm}`
+  );
+  while (result.data.continuation_token) {
+    matchDetails.push(result.data.matches);
+    result = await api.get<GetMatchDetailsResult>(
+      `character/matches/?name=${character}&realm=${realm}&continuation_token=${result.data.continuation_token}`
+    );
+  }
+  return matchDetails.flat();
 }
 
 async function shouldCrawl(character: string, realm: string): Promise<boolean> {
   realm = capitalize(realm);
   character = capitalize(character);
-  const response = await getCharacter(character, realm);
-  if (response.data?.crawl_last_completed) {
-    if (crawledInLast24Hours(response.data.crawl_last_completed)) {
+  const response = await getCrawlerStatus({ character, realm });
+  if (response.crawler_last_finished) {
+    if (crawledInLast24Hours(response.crawler_last_finished)) {
       return false;
     }
   }
@@ -142,25 +183,13 @@ async function shouldCrawl(character: string, realm: string): Promise<boolean> {
 }
 
 function crawledInLast24Hours(crawlLastCompleted: string): boolean {
-  if (crawlLastCompleted) {
-    const then = convertTimestampToDate(crawlLastCompleted);
-    const now = new Date();
-
-    const msBetweenDates = Math.abs(then.getTime() - now.getTime());
-
-    // 👇️ convert ms to hours                  min  sec   ms
-    const hoursBetweenDates = msBetweenDates / (60 * 60 * 1000);
-
-    if (hoursBetweenDates < 24) {
-      return true;
-    }
-  }
-  return false;
+  const yesterday = dayjs().subtract(24, "hour");
+  return dayjs(crawlLastCompleted).isAfter(yesterday);
 }
 
 export {
   getMatchData,
-  getCharacter,
   waitForCrawlToComplete,
   convertTimestampToDate,
+  crawledInLast24Hours,
 };
