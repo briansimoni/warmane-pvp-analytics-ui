@@ -46,6 +46,15 @@ export interface CharacterDetail {
   teamname: string;
 }
 
+export interface CharacterMeta {
+  id: string;
+  name: string;
+  realm: string;
+  document_key: string;
+  updated_at: string;
+  created_at: string;
+}
+
 interface GetCrawlerStatusResponse {
   state: "pending" | "running" | "idle" | "errored";
   crawler_last_finished: string;
@@ -60,7 +69,8 @@ export interface CharacterStatus {
 
 const BASE_URL =
   process.env.NODE_ENV !== "production"
-    ? "https://dev.api.warmane.dog/"
+    ? // ? "https://dev.api.warmane.dog/"
+      "http://localhost:4000/"
     : "https://api.warmane.dog/";
 
 const api = Axios.create({
@@ -101,13 +111,36 @@ function capitalize(s: string) {
   return s[0].toUpperCase() + s.slice(1);
 }
 
+async function getCharacterStats(character: string, realm: string) {
+  realm = capitalize(realm);
+  character = capitalize(character);
+  const result = await api.get<Record<string, any>>(
+    `character/stats?name=${character}&realm=${realm}`
+  );
+  return result.data;
+}
+
+export async function getCharacterMetadata(character: string, realm: string) {
+  realm = capitalize(realm);
+  character = capitalize(character);
+  const result = await api.get<CharacterMeta>(
+    `/character/${character}@${realm}`
+  );
+  return result.data;
+}
+
 /**
  * Polls the API and resolves when the crawl is completed
  * @param character
  * @param realm
  */
 async function waitForCrawlToComplete(character: string, realm: string) {
-  if (!(await shouldCrawl(character, realm))) {
+  const test = await shouldCrawl(character, realm);
+  // if (!(await shouldCrawl(character, realm))) {
+  //   return;
+  // }
+  console.log(test);
+  if (!test) {
     return;
   }
   await crawl(character, realm);
@@ -170,14 +203,35 @@ async function getMatchData(
   return matchDetails.flat();
 }
 
+/**
+ * should crawl if the player exists and has not already been crawled for in the last 24 hours
+ */
 async function shouldCrawl(character: string, realm: string): Promise<boolean> {
   realm = capitalize(realm);
   character = capitalize(character);
-  const response = await getCrawlerStatus({ character, realm });
-  if (response.crawler_last_finished) {
-    if (crawledInLast24Hours(response.crawler_last_finished)) {
-      return false;
+  // try {
+  //   await getCharacterMetadata(character, realm);
+  // } catch (error: any) {
+  //   if (error.response?.status === 404) {
+  //     console.log("Character not found");
+  //     return false;
+  //   }
+  // }
+  let response: GetCrawlerStatusResponse;
+  try {
+    response = await getCrawlerStatus({ character, realm });
+    if (response.crawler_last_finished) {
+      if (crawledInLast24Hours(response.crawler_last_finished)) {
+        console.log("crawled in last 24 hours");
+        return false;
+      }
     }
+  } catch (error: any) {
+    console.log(error);
+    if (error.response?.status === 404) {
+      return true;
+    }
+    throw error;
   }
   return true;
 }
@@ -188,6 +242,7 @@ function crawledInLast24Hours(crawlLastCompleted: string): boolean {
 }
 
 export {
+  getCharacterStats,
   getMatchData,
   waitForCrawlToComplete,
   convertTimestampToDate,

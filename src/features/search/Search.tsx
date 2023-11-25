@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import SearchLabel from "./SearchLabel";
 import "../../App.css";
+import { getCharacterMetadata } from "../../api/warmane-analytics";
 
 type ComponentState = "loading" | "error" | "idle" | "done";
 
@@ -23,6 +24,7 @@ function Search() {
   const [progress, setProgress] = useState(0);
   const state = useAppSelector((e) => e);
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState();
   const searchStatus = state.search.status;
   const matches = state.search.matches;
   const crawlStatus = state.crawl.status;
@@ -33,7 +35,18 @@ function Search() {
 
   useEffect(() => {
     async function search(character: string, realm: string) {
+      if (["error"].includes(componentState)) {
+        return;
+      }
       setComponentState("loading");
+      // getCharacterMetadata makes sure that they actually exist first
+      try {
+        await getCharacterMetadata(character, realm);
+      } catch (error: any) {
+        setComponentState("error");
+        setErrorMessage(error.message);
+        return;
+      }
       await dispatch(
         crawl({
           character,
@@ -157,6 +170,18 @@ function Search() {
             {CrawlStatus.FAILED === crawlStatus && (
               <>
                 <Alert variant="warning">{state.crawl.error.message}</Alert>
+              </>
+            )}
+
+            {SearchStatus.FAILED === searchStatus && (
+              <>
+                <Alert variant="warning">{state.search.errorMessage}</Alert>
+              </>
+            )}
+
+            {componentState === "error" && (
+              <>
+                <Alert variant="warning">{errorMessage}</Alert>
               </>
             )}
           </Row>

@@ -13,6 +13,7 @@ export interface SearchState {
   realm: string;
   matches: MatchDetails[];
   status: SearchStatus;
+  errorMessage?: string;
 }
 
 interface ApiThunkParams {
@@ -31,6 +32,11 @@ export const getMatchHistory = createAsyncThunk(
   "search/getMatchHistory",
   async (params: ApiThunkParams) => {
     const response = await getMatchData(params.character, params.realm);
+    if (response.length === 0) {
+      throw new Error(
+        `${params.character} on ${params.realm} has not played any games this season`
+      );
+    }
     return response;
   }
 );
@@ -58,8 +64,9 @@ export const searchSlice = createSlice({
           state.matches = action.payload;
         }
       })
-      .addCase(getMatchHistory.rejected, (state) => {
+      .addCase(getMatchHistory.rejected, (state, payloadAction) => {
         state.status = SearchStatus.FAILED;
+        state.errorMessage = payloadAction.error.message;
       });
   },
 });
